@@ -1,5 +1,6 @@
 package writer;
 
+import model.HttpStatus;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import writer.file.StaticResourceType;
@@ -25,9 +26,10 @@ public class ResponseHeaderWriter {
         return instance;
     }
 
-    public void write200Header(DataOutputStream dos, StaticResourceType staticResourceType, int lengthOfBodyContent) {
+    public void writeHeader(DataOutputStream dos, StaticResourceType staticResourceType,
+                            int lengthOfBodyContent, HttpStatus status) {
         try {
-            dos.writeBytes("HTTP/1.1 200 OK \r\n");
+            dos.writeBytes("HTTP/1.1 " + status.getCode() + " " + status.getMessage() + " \r\n");
             dos.writeBytes("Content-Type: " + staticResourceType.getContentType() + "\r\n");
             dos.writeBytes("Content-Length: " + lengthOfBodyContent + "\r\n");
             dos.writeBytes("\r\n");

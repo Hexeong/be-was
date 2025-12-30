@@ -19,8 +19,8 @@ public enum HttpStatus {
     NOT_IMPLEMENTED(501, "Not Implemented"),
     SERVICE_UNAVAILABLE(503, "Service Unavailable");
 
-    private int code;
-    private String message;
+    private final int code;
+    private final String message;
 
     HttpStatus(int code, String message) {
         this.code = code;
