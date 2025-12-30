@@ -4,8 +4,6 @@ import model.http.HttpBody;
 import model.http.HttpHeader;
 import model.http.HttpStartLine;
 import model.http.TotalHttpMessage;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import parser.http.impl.HttpParserFactory;
 
 import java.io.BufferedReader;
@@ -14,8 +12,6 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 
 public class HttpParserFacade {
-    private static final Logger log = LoggerFactory.getLogger(HttpParserFacade.class);
-
     private final HeadParser<HttpStartLine> startLineParser;
     private final HeadParser<HttpHeader> headerParser;
     private final ContentParser<HttpBody> bodyParser;
@@ -46,23 +42,18 @@ public class HttpParserFacade {
         return instance;
     }
 
-    public TotalHttpMessage parse(InputStream in) {
+    public TotalHttpMessage parse(InputStream in) throws IOException {
         InputStreamReader isr = new InputStreamReader(in);
         BufferedReader bufRed = new BufferedReader(isr);
 
-        try {
-            HttpStartLine startLine = startLineParser.parse(bufRed);
-            HttpHeader header = headerParser.parse(bufRed);
-            HttpBody body = bodyParser.parse(bufRed, header);
+        HttpStartLine startLine = startLineParser.parse(bufRed);
+        HttpHeader header = headerParser.parse(bufRed);
+        HttpBody body = bodyParser.parse(bufRed, header);
 
-            return new TotalHttpMessage(
-                    startLine,
-                    header,
-                    body
-            );
-        } catch (IOException e) {
-            log.error(e.getMessage());
-            return new TotalHttpMessage();
-        }
+        return new TotalHttpMessage(
+                startLine,
+                header,
+                body
+        );
     }
 }
