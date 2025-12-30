@@ -38,7 +38,6 @@ public class RequestHandler implements Runnable {
                             .getHandler().sendResponse(out, totalHttpMessage);
                 } catch (SocketTimeoutException e) {
                     logger.error(e.getMessage());
-                    logger.debug("1");
                     break;
                 }
             }
