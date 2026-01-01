@@ -9,7 +9,6 @@ import org.slf4j.LoggerFactory;
 import model.http.TotalHttpMessage;
 import parser.http.HttpParserFacade;
 import webserver.handler.response.RequestResourceType;
-import writer.file.StaticResourceType;
 
 public class RequestHandler implements Runnable {
     private static final Logger logger = LoggerFactory.getLogger(RequestHandler.class);
@@ -34,8 +33,8 @@ public class RequestHandler implements Runnable {
                     logger.debug(totalHttpMessage.toString());
 
                     // 현재 요청 자원이 정적 파일인지 url을 보고 파악, 만약 dynamic이면 알아서 Enum에 등록된 Handler를 통해 처리
-                    RequestResourceType.findByRequestResourceType(StaticResourceType.isStaticResourceByUrl(totalHttpMessage.line().url()))
-                            .getHandler().sendResponse(out, totalHttpMessage);
+                    if (!RequestResourceType.process(out, totalHttpMessage))
+                        logger.error("404 처리된 잘못된 경로 요청");
                 } catch (SocketTimeoutException e) {
                     logger.error(e.getMessage());
                     break;
