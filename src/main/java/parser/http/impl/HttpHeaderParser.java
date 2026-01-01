@@ -1,17 +1,15 @@
 package parser.http.impl;
 
-import parser.http.HeadParser;
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
-public class HttpHeaderParser implements HeadParser<Map<String, String>> {
+public class HttpHeaderParser {
 
-    protected HttpHeaderParser() {}
+    public HttpHeaderParser() {}
 
-    public Map<String, String> parse(BufferedReader bufRed) throws IOException {
+    public static Map<String, String> parse(BufferedReader bufRed) throws IOException {
         String line;
         Map<String, String> headers = new HashMap<>();
 

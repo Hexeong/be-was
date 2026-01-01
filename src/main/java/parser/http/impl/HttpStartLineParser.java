@@ -2,18 +2,17 @@ package parser.http.impl;
 
 import extractor.http.QueryParameterExtractor;
 import model.http.HttpStartLine;
-import parser.http.HeadParser;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
-public class HttpStartLineParser implements HeadParser<HttpStartLine> {
+public class HttpStartLineParser {
 
-    protected HttpStartLineParser() {}
+    public HttpStartLineParser() {}
 
-    public HttpStartLine parse(BufferedReader bufRed) throws IOException {
+    public static HttpStartLine parse(BufferedReader bufRed) throws IOException {
         String line = bufRed.readLine();
         String[] tokens = line.split(" ");
 
