@@ -11,23 +11,9 @@ import java.util.Map;
 public class ResponseHeaderWriter {
     private static final Logger log = LoggerFactory.getLogger(ResponseHeaderWriter.class);
 
-    private static volatile ResponseHeaderWriter instance = null;
+    public ResponseHeaderWriter() {}
 
-    private ResponseHeaderWriter() {}
-
-    // TODO:: 유틸 클래스들은 싱글턴이 좋은가?? 어디까지가 싱글턴으로 만들어야 하는가
-    public static ResponseHeaderWriter getInstance() {
-        if (instance == null) {
-            synchronized (ResponseHeaderWriter.class) {
-                if (instance == null) {
-                    instance = new ResponseHeaderWriter();
-                }
-            }
-        }
-        return instance;
-    }
-
-    public void writeHeader(DataOutputStream dos, Map<String, String> additionalHeaders,
+    public static void writeHeader(DataOutputStream dos, Map<String, String> additionalHeaders,
                             int lengthOfBodyContent, HttpStatus status) {
         try {
             // TODO:: version을 고정하는 게 맞는건가? Client가 1.2로 보냈을 때의 웹 서버 정책은 보통 어떻게 되는 것인가??

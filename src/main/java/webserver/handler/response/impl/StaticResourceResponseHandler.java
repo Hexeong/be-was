@@ -37,21 +37,21 @@ public class StaticResourceResponseHandler implements ResponseHandler {
         try {
             body = Files.readAllBytes(file.toPath());
 
-            ResponseHeaderWriter.getInstance().writeHeader(
+            ResponseHeaderWriter.writeHeader(
                     dos,
                     Map.of("Content-Type", staticResourceType.getContentType()),
                     body.length,
                     HttpStatus.OK);
-            ResponseBodyWriter.getInstance().writeBody(dos, body);
+            ResponseBodyWriter.writeBody(dos, body);
             return true;
         } catch (IOException e) {
             log.error(e.getMessage());
-            ResponseHeaderWriter.getInstance().writeHeader(
+            ResponseHeaderWriter.writeHeader(
                     dos,
                     Map.of("Content-Type", StaticResourceType.HTML.getContentType()),
                     0,
                     HttpStatus.NOT_FOUND);
-            ResponseBodyWriter.getInstance().writeBody(dos, null);
+            ResponseBodyWriter.writeBody(dos, new byte[0]);
             return false;
         }
     }

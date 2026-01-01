@@ -28,7 +28,7 @@ public class RequestHandler implements Runnable {
 
             while(true) {
                 try {
-                    TotalHttpMessage totalHttpMessage = HttpParserFacade.getInstance().parse(in);
+                    TotalHttpMessage totalHttpMessage = HttpParserFacade.parse(in);
 
                     logger.debug(totalHttpMessage.toString());
 

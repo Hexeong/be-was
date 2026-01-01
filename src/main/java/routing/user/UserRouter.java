@@ -45,13 +45,13 @@ public class UserRouter implements DomainRouter {
 
             // TODO:: Content-Type도 Enum 처리하기
             DataOutputStream dos = new DataOutputStream(out);
-            ResponseHeaderWriter.getInstance().writeHeader(
+            ResponseHeaderWriter.writeHeader(
                     dos,
                     Map.of("Location", "/index.html"),
                     0,
                     HttpStatus.FOUND);
 
-            ResponseBodyWriter.getInstance().writeBody(dos, null);
+            ResponseBodyWriter.writeBody(dos, null);
         });
 
         private final String path;
