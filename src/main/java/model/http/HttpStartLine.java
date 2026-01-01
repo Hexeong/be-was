@@ -5,18 +5,39 @@ import model.http.sub.RequestMethod;
 
 import java.util.Map;
 
-public record HttpStartLine(
-        RequestMethod method,
-        String pathUrl,
-        Map<String, Object> queryParameterList,
-        HttpVersion version
-) {
+public class HttpStartLine {
+
+    private final RequestMethod method;
+    private String pathUrl;
+    private final Map<String, Object> queryParameterList;
+    private final HttpVersion version;
+
+    private static final String INDEX_FILE_NAME = "/index.html";
+
     public HttpStartLine(String method, String pathUrl, Map<String, Object> queryParameterList, String version) {
-        this(
-                RequestMethod.findByType(method),
-                pathUrl,
-                queryParameterList,
-                HttpVersion.findByType(version)
-        );
+        this.method = RequestMethod.findByType(method);
+        this.pathUrl = pathUrl;
+        this.queryParameterList = queryParameterList;
+        this.version = HttpVersion.findByType(version);
+    }
+
+    public void addIndexHtml() {
+        this.pathUrl = this.pathUrl.concat(INDEX_FILE_NAME);
+    }
+
+    public RequestMethod getMethod() {
+        return method;
+    }
+
+    public String getPathUrl() {
+        return pathUrl;
+    }
+
+    public Map<String, Object> getQueryParameterList() {
+        return queryParameterList;
+    }
+
+    public HttpVersion getVersion() {
+        return version;
     }
 }
