@@ -1,10 +1,9 @@
 package parser.http;
 
-import model.http.HttpHeader;
-
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.util.Map;
 
 public interface ContentParser<T> {
-    T parse(BufferedReader bufRed, HttpHeader header) throws IOException;
+    T parse(BufferedReader bufRed, Map<String, String> header) throws IOException;
 }

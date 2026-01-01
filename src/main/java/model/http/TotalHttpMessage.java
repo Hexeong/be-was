@@ -1,8 +1,10 @@
 package model.http;
 
+import java.util.Map;
+
 public record TotalHttpMessage(
         HttpStartLine line,
-        HttpHeader headers,
+        Map<String, String> headers,
         HttpBody body
 ) {
     public TotalHttpMessage() {
@@ -20,6 +22,6 @@ public record TotalHttpMessage(
                 
                 body: %s
                 """
-                .formatted(line.method(), line.pathUrl(), headers.toString(), body);
+                .formatted(line.getMethod(), line.getPathUrl(), headers.toString(), body);
     }
 }

@@ -1,6 +1,5 @@
 package parser.http.impl;
 
-import model.http.HttpHeader;
 import parser.http.HeadParser;
 
 import java.io.BufferedReader;
@@ -8,11 +7,11 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
-public class HttpHeaderParser implements HeadParser<HttpHeader> {
+public class HttpHeaderParser implements HeadParser<Map<String, String>> {
 
     protected HttpHeaderParser() {}
 
-    public HttpHeader parse(BufferedReader bufRed) throws IOException {
+    public Map<String, String> parse(BufferedReader bufRed) throws IOException {
         String line;
         Map<String, String> headers = new HashMap<>();
 
@@ -21,6 +20,6 @@ public class HttpHeaderParser implements HeadParser<HttpHeader> {
             headers.put(kv[0], kv[1]);
         }
 
-        return new HttpHeader(headers);
+        return headers;
     }
 }
