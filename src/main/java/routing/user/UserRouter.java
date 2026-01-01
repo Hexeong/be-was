@@ -15,7 +15,6 @@ import java.util.Map;
 import java.util.function.BiConsumer;
 
 public class UserRouter implements DomainRouter {
-
     public UserRouter() {}
 
     public boolean route(OutputStream out, TotalHttpMessage message) {
@@ -34,11 +33,12 @@ public class UserRouter implements DomainRouter {
         CREATE("/user/create", RequestMethod.GET, (out, msg) -> {
             Map<String, Object> queryParmeterList = msg.line().getQueryParameterList();
 
+            // TODO:: 비즈니스 로직 분리하기
             User user = new User(
-                    queryParmeterList.get("userId").toString(),
-                    queryParmeterList.get("password").toString(),
-                    queryParmeterList.get("name").toString(),
-                    queryParmeterList.get("email").toString()
+                    queryParmeterList.getOrDefault("userId", "").toString(),
+                    queryParmeterList.getOrDefault("password", "").toString(),
+                    queryParmeterList.getOrDefault("name", "").toString(),
+                    queryParmeterList.getOrDefault("email", "").toString()
             );
 
             Database.addUser(user);
@@ -50,6 +50,7 @@ public class UserRouter implements DomainRouter {
                     Map.of("Location", "/index.html"),
                     0,
                     HttpStatus.FOUND);
+
             ResponseBodyWriter.getInstance().writeBody(dos, null);
         });
 
