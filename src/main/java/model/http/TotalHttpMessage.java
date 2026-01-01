@@ -20,6 +20,6 @@ public record TotalHttpMessage(
                 
                 body: %s
                 """
-                .formatted(line.method(), line.url(), headers.toString(), body);
+                .formatted(line.method(), line.pathUrl(), headers.toString(), body);
     }
 }

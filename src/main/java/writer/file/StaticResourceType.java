@@ -1,6 +1,6 @@
 package writer.file;
 
-import extractor.FileTypeExtractor;
+import extractor.http.FileTypeExtractor;
 
 public enum StaticResourceType {
     HTML("html", "text/html; charset=utf-8"),
@@ -27,8 +27,8 @@ public enum StaticResourceType {
         throw new IllegalArgumentException("Not Found FileType By " + type);
     }
 
-    public static String isStaticResourceByUrl(String url) {
-        String type = FileTypeExtractor.getInstance().extractFileExtensionFromURL(url);
+    public static String isStaticResourceByUrl(String pathUrl) {
+        String type = FileTypeExtractor.getInstance().extract(pathUrl);
 
         for (StaticResourceType staticResourceType : StaticResourceType.values()) {
             if (staticResourceType.fileExtension.equals(type))

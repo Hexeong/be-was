@@ -1,7 +1,7 @@
 package webserver.handler.response.impl;
 
-import extractor.FileTypeExtractor;
-import model.HttpStatus;
+import extractor.http.FileTypeExtractor;
+import model.http.HttpStatus;
 import model.http.TotalHttpMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,11 +26,11 @@ public class StaticResourceResponseHandler implements ResponseHandler {
     public void sendResponse(OutputStream out, TotalHttpMessage message) {
         DataOutputStream dos = new DataOutputStream(out);
 
-        String fileExtension = FileTypeExtractor.getInstance().extractFileExtensionFromURL(message.line().url());
+        String fileExtension = FileTypeExtractor.getInstance().extract(message.line().pathUrl());
 
         StaticResourceType staticResourceType = StaticResourceType.findByType(fileExtension);
 
-        File file = new File(BASE_DIRECTORY_PATH + message.line().url());
+        File file = new File(BASE_DIRECTORY_PATH + message.line().pathUrl());
 
         byte[] body;
         try {

@@ -1,6 +1,6 @@
-package extractor;
+package extractor.http;
 
-public class FileTypeExtractor {
+public class FileTypeExtractor implements HttpInfoExtractor<String> {
 
     private static volatile FileTypeExtractor instance = null;
 
@@ -17,14 +17,12 @@ public class FileTypeExtractor {
         return instance;
     }
 
-    public String extractFileExtensionFromURL(String url) {
-        String fullUrl = url;
-
-        int lastIdxOfDot = fullUrl.lastIndexOf(".");
+    public String extract(String pathUrl) {
+        int lastIdxOfDot = pathUrl.lastIndexOf(".");
 
         if (lastIdxOfDot == -1)
             return ""; // 비교를 위해 빈 문자열을 return
 
-        return url.substring(lastIdxOfDot + 1);
+        return pathUrl.substring(lastIdxOfDot + 1);
     }
 }
