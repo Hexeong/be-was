@@ -13,7 +13,8 @@ public class ResponseBodyWriter {
 
     public static void writeBody(DataOutputStream dos, byte[] body) {
         try {
-            dos.write(body, 0, body.length);
+            if (body != null)
+                dos.write(body, 0, body.length);
             dos.flush();
         } catch (IOException e) {
             log.error(e.getMessage());
