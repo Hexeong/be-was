@@ -15,6 +15,9 @@ import java.util.Map;
 import java.util.function.BiConsumer;
 
 public class UserRouter implements DomainRouter {
+    private static final String REDIRECT_HEADER_KEY = "Location";
+    private static final String REDIRECT_HEADER_VALUE = "/index.html";
+
     public UserRouter() {}
 
     public boolean route(OutputStream out, TotalHttpMessage message) {
@@ -47,11 +50,11 @@ public class UserRouter implements DomainRouter {
             DataOutputStream dos = new DataOutputStream(out);
             ResponseHeaderWriter.writeHeader(
                     dos,
-                    Map.of("Location", "/index.html"),
+                    Map.of(REDIRECT_HEADER_KEY, REDIRECT_HEADER_VALUE),
                     0,
                     HttpStatus.FOUND);
 
-            ResponseBodyWriter.writeBody(dos, null);
+            ResponseBodyWriter.writeBody(dos, new byte[0]);
         });
 
         private final String path;

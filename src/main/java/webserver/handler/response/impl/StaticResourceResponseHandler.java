@@ -19,6 +19,7 @@ import java.util.Map;
 
 public class StaticResourceResponseHandler implements ResponseHandler {
     private static final String BASE_DIRECTORY_PATH = "./src/main/resources/static";
+    private static final String CONTENT_TYPE_KEY = "content-type";
 
     private static final Logger log = LoggerFactory.getLogger(StaticResourceResponseHandler.class);
 
@@ -33,13 +34,12 @@ public class StaticResourceResponseHandler implements ResponseHandler {
 
         File file = new File(BASE_DIRECTORY_PATH + message.line().getPathUrl());
 
-        byte[] body;
         try {
-            body = Files.readAllBytes(file.toPath());
+            byte[] body = Files.readAllBytes(file.toPath());
 
             ResponseHeaderWriter.writeHeader(
                     dos,
-                    Map.of("Content-Type", staticResourceType.getContentType()),
+                    Map.of(CONTENT_TYPE_KEY, staticResourceType.getContentType()),
                     body.length,
                     HttpStatus.OK);
             ResponseBodyWriter.writeBody(dos, body);
@@ -48,7 +48,7 @@ public class StaticResourceResponseHandler implements ResponseHandler {
             log.error(e.getMessage());
             ResponseHeaderWriter.writeHeader(
                     dos,
-                    Map.of("Content-Type", StaticResourceType.HTML.getContentType()),
+                    Map.of(CONTENT_TYPE_KEY, StaticResourceType.HTML.getContentType()),
                     0,
                     HttpStatus.NOT_FOUND);
             ResponseBodyWriter.writeBody(dos, new byte[0]);
