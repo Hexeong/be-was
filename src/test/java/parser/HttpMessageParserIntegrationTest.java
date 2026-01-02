@@ -21,7 +21,7 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 
 public class HttpMessageParserIntegrationTest {
 
-    private List<HttpRequestTestCase> testCases;
+    private List<HttpRequestTestCase> testCases; // [AI를 사용해 테스트 값 생성]
 
     @BeforeEach
     void setUp() {
@@ -127,7 +127,7 @@ public class HttpMessageParserIntegrationTest {
         }
     }
 
-    // 테스트 데이터와 기대값을 함께 들고 있는 클래스 (Helper Class)
+    // 테스트 데이터와 기대값을 함께 들고 있는 클래스 (Helper Class) - [AI를 통해 헬퍼 클래스 생성]
     private static class HttpRequestTestCase {
         String description;
         RequestMethod expectedMethod;
