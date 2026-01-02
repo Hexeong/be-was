@@ -18,7 +18,9 @@ public class HttpBodyParser {
             int contentLength = Integer.parseInt(headers.get("Content-Length"));
             char[] bodyChars = new char[contentLength];
 
-            return new HttpBody(String.valueOf(bufRed.read(bodyChars, 0, contentLength)));
+            bufRed.read(bodyChars, 0, contentLength);
+
+            return new HttpBody(new String(bodyChars));
         }
         return null;
     }
