@@ -7,6 +7,8 @@ import java.util.Map;
 
 public class HttpHeaderParser {
 
+    private static final String HEADER_DELIMITER = ":";
+
     public HttpHeaderParser() {}
 
     public static Map<String, String> parse(BufferedReader bufRed) throws IOException {
@@ -14,8 +16,8 @@ public class HttpHeaderParser {
         Map<String, String> headers = new HashMap<>();
 
         while((line = bufRed.readLine()) != null && !line.isEmpty()) {
-            String[] kv = line.split(": ");
-            headers.put(kv[0], kv[1]);
+            int indexOfFirst = line.indexOf(HEADER_DELIMITER);
+            headers.put(line.substring(0, indexOfFirst).toLowerCase(), line.substring(indexOfFirst).trim());
         }
 
         return headers;

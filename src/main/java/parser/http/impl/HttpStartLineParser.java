@@ -10,20 +10,34 @@ import java.util.Map;
 
 public class HttpStartLineParser {
 
+    private static final String SP = " ";
+    private static final String QUERY_STRING_DELIMITER = "?";
+
     public HttpStartLineParser() {}
 
     public static HttpStartLine parse(BufferedReader bufRed) throws IOException {
         String line = bufRed.readLine();
-        String[] tokens = line.split(" ");
+        if (line == null || line.isBlank()) {
+            throw new IOException("Invalid or Empty Request Line");
+        }
+        String[] tokens = line.split(SP);
 
-        int lastIdx = tokens[1].lastIndexOf("?");
+        if (tokens.length != 3) {
+            throw new IllegalArgumentException("Invalid Request Line format: " + line);
+        }
+
+        String method = tokens[0];
+        String targetUrl = tokens[1]; // path + query string
+        String version = tokens[2];
+
+        int lastIdx = targetUrl.indexOf(QUERY_STRING_DELIMITER);
 
         if (lastIdx == -1)
-            return new HttpStartLine(tokens[0], tokens[1], new HashMap<>(), tokens[2]);
+            return new HttpStartLine(method, targetUrl, new HashMap<>(), version);
 
         Map<String, Object> queryParameterList =
                 QueryParameterExtractor.getInstance().extract(tokens[1].substring(lastIdx + 1));
 
-        return new HttpStartLine(tokens[0], tokens[1].substring(0, lastIdx), queryParameterList, tokens[2]);
+        return new HttpStartLine(method, targetUrl.substring(0, lastIdx), queryParameterList, version);
     }
 }
