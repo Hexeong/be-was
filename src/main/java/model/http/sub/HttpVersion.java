@@ -17,4 +17,8 @@ public enum HttpVersion {
         }
         throw new IllegalArgumentException("Not found HttpVersion By " + type);
     }
+
+    public String getVersion() {
+        return version;
+    }
 }

@@ -14,6 +14,13 @@ public class HttpStartLine {
 
     private static final String INDEX_FILE_NAME = "/index.html";
 
+    public HttpStartLine(RequestMethod method, String pathUrl, Map<String, Object> queryParameterList, HttpVersion version) {
+        this.method = method;
+        this.pathUrl = pathUrl;
+        this.queryParameterList = queryParameterList;
+        this.version = version;
+    }
+
     public HttpStartLine(String method, String pathUrl, Map<String, Object> queryParameterList, String version) {
         this.method = RequestMethod.findByType(method);
         this.pathUrl = pathUrl;
