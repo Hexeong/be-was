@@ -22,4 +22,12 @@ public class HttpBody {
     public void setParsedBody(Object parsedBody) {
         this.parsedBody = parsedBody;
     }
+
+    @Override
+    public String toString() {
+        return "HttpBody{" +
+                "bodyText='" + bodyText + '\'' +
+                ", parsedBody=" + parsedBody +
+                '}';
+    }
 }
