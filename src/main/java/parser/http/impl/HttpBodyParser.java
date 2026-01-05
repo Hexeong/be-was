@@ -2,8 +2,9 @@ package parser.http.impl;
 
 import model.http.HttpBody;
 
-import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 import java.util.Map;
 
 public class HttpBodyParser {
@@ -12,13 +13,13 @@ public class HttpBodyParser {
 
     private static final String CONTENT_LENGTH_KEY = "content-length";
 
-    public static HttpBody parse(BufferedReader bufRed, Map<String, String> headers) throws IOException {
+    public static HttpBody parse(InputStream in, Map<String, String> headers) throws IOException {
         // [RFC 9112 Section 6.1]
         // TODO:: Transfer-Encoding 헤더가 있으면 Content-Length는 무조건 무시해야 함.
         //        만약 둘 다 있는데 Transfer-Encoding이 chunked가 아니라면 에러를 뱉거나 연결을 닫는 것이 원칙
 
         if (headers.containsKey(CONTENT_LENGTH_KEY)) {
-            return parseFixedLengthBody(bufRed, headers);
+            return parseFixedLengthBody(in, headers);
         }
 
         // [RFC 9112 Section 6.3]
@@ -26,20 +27,24 @@ public class HttpBodyParser {
         return new HttpBody("");
     }
 
-    private static HttpBody parseFixedLengthBody(BufferedReader bufRed, Map<String, String> headers) throws IOException {
+    private static HttpBody parseFixedLengthBody(InputStream inputStream, Map<String, String> headers) throws IOException {
         try {
             int contentLength = Integer.parseInt(headers.get(CONTENT_LENGTH_KEY));
-            char[] bodyChars = new char[contentLength];
 
-            // TCP의 경우 Body 길이가 길어져 패킷 전체가 MTU보다 커질 경우, 패킷 분할이 진행된다.
-            // 때문에, 한번에 최대 길이 만큼 안들어올 수 있어 content-length가 채워질 때까지 while문으로 read요청을 해야 한다.
+            // 1. 바이트 배열 생성 (char[] 아님)
+            byte[] bodyBytes = new byte[contentLength];
+
             int offset = 0;
             while (offset < contentLength) {
-                int read = bufRed.read(bodyChars, offset, contentLength - offset);
+                // 2. 바이트 단위로 읽기
+                int read = inputStream.read(bodyBytes, offset, contentLength - offset);
                 if (read == -1) throw new IOException("Unexpected End of Stream in Fixed-Length Body");
                 offset += read;
             }
-            return new HttpBody(new String(bodyChars));
+
+            // 3. 바이트를 다 읽은 후 문자열로 변환 (여기서 인코딩 지정)
+            return new HttpBody(new String(bodyBytes, StandardCharsets.UTF_8));
+
         } catch (NumberFormatException e) {
             throw new IOException("Invalid Content-Length format", e);
         }
