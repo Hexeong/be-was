@@ -125,7 +125,7 @@ public class HttpMessageParserIntegrationTest {
 
             // 5. Body 검증 (Body가 있는 경우만)
             if (testCase.expectedBody != null) {
-                assertThat(result.body().bodyText()).isEqualTo(testCase.expectedBody);
+                assertThat(result.body().getBodyText()).isEqualTo(testCase.expectedBody);
             }
         }
     }
