@@ -1,51 +1,49 @@
 package routing.user;
 
-import business.Business;
+import business.BusinessHandler;
 import business.UserBusinessLogic;
-import model.http.TotalHttpMessage;
+import model.http.HttpRequest;
 import model.http.sub.RequestMethod;
-import resolver.ArgumentResolver;
-import resolver.FormDataResolver;
+import resolver.argument.ArgumentResolver;
+import resolver.argument.FormDataResolver;
 import routing.DomainRouter;
 
-import java.io.OutputStream;
 import java.util.HashMap;
 import java.util.Map;
 
 public class UserRouter implements DomainRouter {
-    private final Map<String, Business> businessMap = new HashMap<>();
+    private final Map<String, BusinessHandler> businessMap = new HashMap<>();
 
     public UserRouter() {
         UserBusinessLogic logic = new UserBusinessLogic();
         // TODO:: Content-Type에 따른 자동 ArgumentResolver 호출하는 로직이면 더 좋을 듯
         addRoute(RequestMethod.POST, "/user/create", logic::createUser, FormDataResolver.getInstance());
         addRoute(RequestMethod.POST, "/user/login", logic::login, FormDataResolver.getInstance());
+        addRoute(RequestMethod.GET, "/user/logout", logic::logout, FormDataResolver.getInstance());
     }
 
-    // [AI를 활용한 어댑터 패턴 처리]
-    private <T> void addRoute(RequestMethod method, String path, Business business, ArgumentResolver<T> resolver) {
-        Business wrappedBusiness = (out, message) -> {
-            String bodyText = message.body().getBodyText();
+    private <T> void addRoute(RequestMethod method, String path, BusinessHandler businessHandler, ArgumentResolver<T> resolver) {
+        BusinessHandler wrappedBusinessHandler = (req, res) -> {
+            String bodyText = req.body().getBodyText();
             if (bodyText != null && !bodyText.isEmpty()) {
                 T parsedData = resolver.resolve(bodyText);
-                message.body().setParsedBody(parsedData);
+                req.body().setParsedBody(parsedData);
             }
 
-            business.execute(out, message);
+            return businessHandler.execute(req, res);
         };
 
-        businessMap.put(method.name() + " " + path, wrappedBusiness);
+        businessMap.put(method.name() + " " + path, wrappedBusinessHandler);
     }
 
     @Override
-    public boolean route(OutputStream out, TotalHttpMessage message) {
-        String key = message.line().getMethod().name() + " " + message.line().getPathUrl();
+    public BusinessHandler getHandler(HttpRequest req) {
+        String key = req.line().getMethod().name() + " " + req.line().getPathUrl();
 
         if (businessMap.containsKey(key)) {
-            businessMap.get(key).execute(out, message);
-            return true;
+            return businessMap.get(key);
         }
 
-        return false;
+        return null;
     }
 }

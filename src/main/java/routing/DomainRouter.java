@@ -1,9 +1,8 @@
 package routing;
 
-import model.http.TotalHttpMessage;
-
-import java.io.OutputStream;
+import business.BusinessHandler;
+import model.http.HttpRequest;
 
 public interface DomainRouter {
-    boolean route(OutputStream out, TotalHttpMessage message);
+    BusinessHandler getHandler(HttpRequest req);
 }
