@@ -1,4 +1,4 @@
-package resolver;
+package resolver.argument;
 
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
