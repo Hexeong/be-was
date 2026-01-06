@@ -2,25 +2,12 @@ package extractor.http;
 
 import java.util.*;
 
-public class QueryParameterExtractor implements HttpInfoExtractor<Map<String, Object>> {
-
-    private static volatile QueryParameterExtractor instance = null;
+public class QueryParameterExtractor{
 
     private QueryParameterExtractor() {}
 
-    public static QueryParameterExtractor getInstance() {
-        if (instance == null) {
-            synchronized (QueryParameterExtractor.class) {
-                if (instance == null) {
-                    instance = new QueryParameterExtractor();
-                }
-            }
-        }
-        return instance;
-    }
-
     // [AI] 웹 표준 검색 및 처리 방식 검색
-    public Map<String, Object> extract(String queryString) {
+    public static Map<String, Object> extract(String queryString) {
         Map<String, Object> queryParams = new HashMap<>();
 
         // 방어로직 추가
