@@ -2,7 +2,7 @@ package fixture;
 
 import model.http.HttpBody;
 import model.http.HttpStartLine;
-import model.http.TotalHttpMessage;
+import model.http.HttpRequest;
 import model.http.sub.HttpVersion;
 import model.http.sub.RequestMethod;
 
@@ -92,13 +92,13 @@ public class HttpMessageTestFixture {
         return query.toString();
     }
 
-    public static TotalHttpMessage createParsedHttpMessage(RequestMethod method,
-                                                           String pathUrl,
-                                                           Map<String, Object> queryParameterList,
-                                                           HttpVersion version,
-                                                           Map<String, String> headers, String body) {
+    public static HttpRequest createParsedHttpMessage(RequestMethod method,
+                                                      String pathUrl,
+                                                      Map<String, Object> queryParameterList,
+                                                      HttpVersion version,
+                                                      Map<String, String> headers, String body) {
 
-        return new TotalHttpMessage(
+        return new HttpRequest(
                 new HttpStartLine(method, pathUrl, queryParameterList, version),
                 headers,
                 new HttpBody(body));

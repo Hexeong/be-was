@@ -2,12 +2,12 @@ package model.http;
 
 import java.util.Map;
 
-public record TotalHttpMessage(
+public record HttpRequest(
         HttpStartLine line,
         Map<String, String> headers,
         HttpBody body
 ) {
-    public TotalHttpMessage() {
+    public HttpRequest() {
         this(null, null, null);
     }
 
