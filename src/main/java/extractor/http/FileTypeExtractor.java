@@ -1,23 +1,10 @@
 package extractor.http;
 
-public class FileTypeExtractor implements HttpInfoExtractor<String> {
-
-    private static volatile FileTypeExtractor instance = null;
+public class FileTypeExtractor {
 
     private FileTypeExtractor() {}
 
-    public static FileTypeExtractor getInstance() {
-        if (instance == null) {
-            synchronized (FileTypeExtractor.class) {
-                if (instance == null) {
-                    instance = new FileTypeExtractor();
-                }
-            }
-        }
-        return instance;
-    }
-
-    public String extract(String pathUrl) {
+    public static String extract(String pathUrl) {
         int lastIdxOfDot = pathUrl.lastIndexOf(".");
 
         if (lastIdxOfDot == -1)
