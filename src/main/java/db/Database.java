@@ -14,7 +14,7 @@ public class Database {
     }
 
     public static User findUserById(String userId) {
-        return users.get(userId);
+        return users.getOrDefault(userId, null);
     }
 
     public static Collection<User> findAll() {

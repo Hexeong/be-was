@@ -1,70 +1,51 @@
 package routing.user;
 
-import db.Database;
-import model.http.HttpStatus;
-import model.user.User;
+import business.Business;
+import business.UserBusinessLogic;
 import model.http.TotalHttpMessage;
 import model.http.sub.RequestMethod;
+import resolver.ArgumentResolver;
+import resolver.FormDataResolver;
 import routing.DomainRouter;
-import writer.ResponseBodyWriter;
-import writer.ResponseHeaderWriter;
 
-import java.io.DataOutputStream;
 import java.io.OutputStream;
+import java.util.HashMap;
 import java.util.Map;
-import java.util.function.BiConsumer;
 
 public class UserRouter implements DomainRouter {
-    private static final String REDIRECT_HEADER_KEY = "Location";
-    private static final String REDIRECT_HEADER_VALUE = "/index.html";
+    private final Map<String, Business> businessMap = new HashMap<>();
 
-    public UserRouter() {}
-
-    public boolean route(OutputStream out, TotalHttpMessage message) {
-        for (UserPath mapping : UserPath.values()) {
-            if (mapping.path.equals(message.line().getPathUrl())
-                    && mapping.method.equals(message.line().getMethod())) {
-
-                mapping.handler.accept(out, message);
-                return true;
-            }
-        }
-        return false;
+    public UserRouter() {
+        UserBusinessLogic logic = new UserBusinessLogic();
+        // TODO:: Content-Type에 따른 자동 ArgumentResolver 호출하는 로직이면 더 좋을 듯
+        addRoute(RequestMethod.POST, "/user/create", logic::createUser, FormDataResolver.getInstance());
+        addRoute(RequestMethod.POST, "/user/login", logic::login, FormDataResolver.getInstance());
     }
 
-    private enum UserPath {
-        CREATE("/user/create", RequestMethod.GET, (out, msg) -> {
-            Map<String, Object> queryParmeterList = msg.line().getQueryParameterList();
+    // [AI를 활용한 어댑터 패턴 처리]
+    private <T> void addRoute(RequestMethod method, String path, Business business, ArgumentResolver<T> resolver) {
+        Business wrappedBusiness = (out, message) -> {
+            String bodyText = message.body().getBodyText();
+            if (bodyText != null && !bodyText.isEmpty()) {
+                T parsedData = resolver.resolve(bodyText);
+                message.body().setParsedBody(parsedData);
+            }
 
-            // TODO:: 비즈니스 로직 분리하기
-            User user = new User(
-                    queryParmeterList.getOrDefault("userId", "").toString(),
-                    queryParmeterList.getOrDefault("password", "").toString(),
-                    queryParmeterList.getOrDefault("name", "").toString(),
-                    queryParmeterList.getOrDefault("email", "").toString()
-            );
+            business.execute(out, message);
+        };
 
-            Database.addUser(user);
+        businessMap.put(method.name() + " " + path, wrappedBusiness);
+    }
 
-            // TODO:: Content-Type도 Enum 처리하기
-            DataOutputStream dos = new DataOutputStream(out);
-            ResponseHeaderWriter.writeHeader(
-                    dos,
-                    Map.of(REDIRECT_HEADER_KEY, REDIRECT_HEADER_VALUE),
-                    0,
-                    HttpStatus.FOUND);
+    @Override
+    public boolean route(OutputStream out, TotalHttpMessage message) {
+        String key = message.line().getMethod().name() + " " + message.line().getPathUrl();
 
-            ResponseBodyWriter.writeBody(dos, new byte[0]);
-        });
-
-        private final String path;
-        private final RequestMethod method;
-        private final BiConsumer<OutputStream, TotalHttpMessage> handler;
-
-        UserPath(String path, RequestMethod method, BiConsumer<OutputStream, TotalHttpMessage> handler) {
-            this.path = path;
-            this.method = method;
-            this.handler = handler;
+        if (businessMap.containsKey(key)) {
+            businessMap.get(key).execute(out, message);
+            return true;
         }
+
+        return false;
     }
 }

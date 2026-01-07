@@ -5,7 +5,6 @@ import model.http.TotalHttpMessage;
 import model.http.sub.HttpVersion;
 import model.http.sub.RequestMethod;
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import parser.http.HttpParserFacade;
 
@@ -39,7 +38,7 @@ public class HttpMessageParserIntegrationTest {
                 RequestMethod.GET,
                 "/index.html",
                 new HashMap<>(), // 빈 파라미터
-                Map.of("Host", "localhost:8080", "Connection", "keep-alive"),
+                Map.of("host", "localhost:8080", "connection", "keep-alive"),
                 null // Body 없음
         ));
 
@@ -56,7 +55,7 @@ public class HttpMessageParserIntegrationTest {
                 RequestMethod.GET,
                 "/search",
                 queryParams,
-                Map.of("Host", "localhost:8080"),
+                Map.of("host", "localhost:8080"),
                 null
         ));
 
@@ -69,7 +68,7 @@ public class HttpMessageParserIntegrationTest {
                 RequestMethod.POST,
                 "/api/users",
                 null,
-                Map.of("Host", "localhost:8080", "Content-Type", "application/json"),
+                Map.of("host", "localhost:8080", "content-type", "application/json"),
                 jsonBody
         ));
 
@@ -82,7 +81,7 @@ public class HttpMessageParserIntegrationTest {
                 RequestMethod.POST,
                 "/user/create",
                 null,
-                Map.of("Host", "localhost:8080", "Content-Type", "application/x-www-form-urlencoded"),
+                Map.of("host", "localhost:8080", "content-type", "application/x-www-form-urlencoded"),
                 formData
         ));
     }
@@ -126,7 +125,7 @@ public class HttpMessageParserIntegrationTest {
 
             // 5. Body 검증 (Body가 있는 경우만)
             if (testCase.expectedBody != null) {
-                assertThat(result.body().bodyText()).isEqualTo(testCase.expectedBody);
+                assertThat(result.body().getBodyText()).isEqualTo(testCase.expectedBody);
             }
         }
     }
@@ -141,13 +140,13 @@ public class HttpMessageParserIntegrationTest {
         byte[] maliciousSequence = new byte[]{(byte) 0xF0, (byte) 0x0A};
 
         String startLine = "POST / HTTP/1.1\r\n";
-        String normalHeader = "Host: localhost\r\n";
+        String normalHeader = "host: localhost\r\n";
 
         // 악의적인 헤더: "Bad-Header: <0xF0><0x0A>"
         // 의도: 여기서 줄바꿈이 일어나야 하는데, 파서가 0xF0와 0x0A를 합쳐서 글자로 인식하면
         // 그 다음 라인("Smuggled-Header...")까지 같은 줄로 읽어버리게 됨.
-        byte[] headerPrefix = "Bad-Header: ".getBytes(StandardCharsets.US_ASCII);
-        byte[] smuggledHeader = "Smuggled-Header: admin\r\n\r\n".getBytes(StandardCharsets.US_ASCII);
+        byte[] headerPrefix = "bad-header: ".getBytes(StandardCharsets.US_ASCII);
+        byte[] smuggledHeader = "smuggled-header: admin\r\n\r\n".getBytes(StandardCharsets.US_ASCII);
 
         // 전체 바이트 배열 조립
         byte[] requestBytes = concatBytes(
