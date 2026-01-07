@@ -6,6 +6,10 @@
 2. 요청 URL에 따라 src/main/resources/static 디렉토리 하위에 존재하는 정적 파일 응답
    - html 파일 외에도 css나 favicon 등과 같은 다양한 컨텐츠 타입도 지원한다.
    - 지원되는 컨텐츠 타입의 확장자 목록: html, css, js, ico, png, jpg
+3. POST 메서드의 login, register 기능 지원
+   - 해당 기능에 대한 redirect 구현
+4. 쿠키와 세션을 사용한 유저 인증 방식 지원
+5. 커스텀 템플릿 엔진을 사용하여 동적 렌더링을 지원
 
 ## 프로그래밍 요구사항 명세
 1. 개발 환경: JDK-17, IntelliJ IDE 사용
