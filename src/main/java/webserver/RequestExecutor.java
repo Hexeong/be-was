@@ -1,6 +1,6 @@
 package webserver;
 
-import webserver.handler.request.RequestHandler;
+import webserver.handler.RequestHandler;
 
 import java.net.Socket;
 import java.util.concurrent.ExecutorService;

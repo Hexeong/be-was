@@ -1,27 +1,28 @@
-package routing.user;
+package routing;
 
 import business.BusinessHandler;
-import business.UserBusinessLogic;
+import business.IndexBusinessLogic;
 import model.http.HttpRequest;
 import model.http.sub.RequestMethod;
 import resolver.argument.ArgumentResolver;
 import resolver.argument.FormDataResolver;
-import routing.DomainRouter;
 
 import java.util.HashMap;
 import java.util.Map;
 
-public class UserRouter implements DomainRouter {
+public class DefaultRouter implements DomainRouter {
     private final Map<String, BusinessHandler> businessMap = new HashMap<>();
 
-    public UserRouter() {
-        UserBusinessLogic logic = new UserBusinessLogic();
+    public DefaultRouter() {
+        IndexBusinessLogic logic = new IndexBusinessLogic();
         // TODO:: Content-Type에 따른 자동 ArgumentResolver 호출하는 로직이면 더 좋을 듯
-        addRoute(RequestMethod.POST, "/user/create", logic::createUser, FormDataResolver.getInstance());
-        addRoute(RequestMethod.POST, "/user/login", logic::login, FormDataResolver.getInstance());
-        addRoute(RequestMethod.GET, "/user/logout", logic::logout, FormDataResolver.getInstance());
+        addRoute(RequestMethod.GET, "/", logic::indexPage, FormDataResolver.getInstance());
+        addRoute(RequestMethod.GET, "/registration", logic::registrationPage, FormDataResolver.getInstance());
+        addRoute(RequestMethod.GET, "/login", logic::loginPage, FormDataResolver.getInstance());
+
     }
 
+    // [AI를 활용한 어댑터 패턴 처리]
     private <T> void addRoute(RequestMethod method, String path, BusinessHandler businessHandler, ArgumentResolver<T> resolver) {
         BusinessHandler wrappedBusinessHandler = (req, res) -> {
             String bodyText = req.body().getBodyText();

@@ -1,7 +1,7 @@
 package parser;
 
 import fixture.HttpMessageTestFixture;
-import model.http.TotalHttpMessage;
+import model.http.HttpRequest;
 import model.http.sub.HttpVersion;
 import model.http.sub.RequestMethod;
 import org.junit.jupiter.api.BeforeAll;
@@ -92,7 +92,7 @@ public class HttpMessageParserIntegrationTest {
             System.out.println("Testing case: " + testCase.description);
 
             // given & when: 파싱 수행
-            TotalHttpMessage result;
+            HttpRequest result;
             try {
                 result = HttpParserFacade.parse(testCase.inputStream);
             } catch (IOException e) {
@@ -131,7 +131,7 @@ public class HttpMessageParserIntegrationTest {
     }
 
     @Test
-    void 멀티바이트_문자를_사용한_공격에_대해_예외를_던진다() throws IOException { // AI로 악의적인 공격에 대한 Test 작성
+    void 멀티바이트_문자를_사용한_공격에_대해_예외를_던진다() { // AI로 악의적인 공격에 대한 Test 작성
         // Given
         // 악의적인 바이트 시퀀스 구성:
         // 0xF0: UTF-8에서 4바이트 문자의 시작을 알리는 바이트 (뒤에 3바이트가 더 와야 함)

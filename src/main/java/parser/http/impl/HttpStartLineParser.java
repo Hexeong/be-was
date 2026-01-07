@@ -47,7 +47,7 @@ public class HttpStartLineParser {
             return new HttpStartLine(method, targetUrl, new HashMap<>(), version);
 
         Map<String, Object> queryParameterList =
-                QueryParameterExtractor.getInstance().extract(tokens[1].substring(lastIdx + 1));
+                QueryParameterExtractor.extract(tokens[1].substring(lastIdx + 1));
 
         return new HttpStartLine(method, targetUrl.substring(0, lastIdx), queryParameterList, version);
     }

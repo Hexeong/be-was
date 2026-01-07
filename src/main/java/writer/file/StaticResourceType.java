@@ -23,14 +23,15 @@ public enum StaticResourceType {
 
     public static StaticResourceType findByType(String type) {
         for (StaticResourceType staticResourceType : StaticResourceType.values()) {
-            if (staticResourceType.fileExtension.equals(type))
+            if (staticResourceType.fileExtension.equals(type)) {
                 return staticResourceType;
+            }
         }
         throw new IllegalArgumentException("Not Found FileType By " + type);
     }
 
     public static boolean isStaticResourceByUrl(String pathUrl) {
-        String type = FileTypeExtractor.getInstance().extract(pathUrl);
+        String type = FileTypeExtractor.extract(pathUrl);
 
         return Arrays.stream(StaticResourceType.values())
                 .anyMatch(resourceType -> resourceType.fileExtension.equals(type));
