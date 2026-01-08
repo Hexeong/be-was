@@ -62,6 +62,18 @@ public final class HttpResponse {
         writeBody(dos);
     }
 
+    public void send500ErrorResopnse() {
+        DataOutputStream dos = new DataOutputStream(this.out);
+
+        // clear 작업
+        this.status = HttpStatus.INTERNAL_SERVER_ERROR;
+        this.headers.clear();
+        this.body = new byte[0];
+
+        writeHeader(dos);
+        writeBody(dos);
+    }
+
     private void writeHeader(DataOutputStream dos) {
         try {
             dos.writeBytes( version.getVersion() + " " + status.getCode() + " " + status.getMessage() + " \r\n");
@@ -125,5 +137,4 @@ public final class HttpResponse {
                 "headers=" + headers + ", " +
                 "body=" + body + ']';
     }
-
 }

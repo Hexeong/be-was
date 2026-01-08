@@ -11,7 +11,7 @@ public class RequestExecutor {
 
     RequestExecutor() {}
 
-    public static void submit(Socket connection) {
-        executorService.submit(new RawRequestHandler(connection));
+    public static void submit(Socket connection, ApplicationContext context) {
+        executorService.submit(new RawRequestHandler(connection, context));
     }
 }
