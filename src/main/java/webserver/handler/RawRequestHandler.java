@@ -13,12 +13,12 @@ import parser.http.HttpParserFacade;
 import resolver.view.ModelAndView;
 import routing.TotalRouteMapping;
 
-public class RequestHandler implements Runnable {
-    private static final Logger log = LoggerFactory.getLogger(RequestHandler.class);
+public class RawRequestHandler implements Runnable {
+    private static final Logger log = LoggerFactory.getLogger(RawRequestHandler.class);
 
     private Socket connection;
 
-    public RequestHandler(Socket connectionSocket) {
+    public RawRequestHandler(Socket connectionSocket) {
         this.connection = connectionSocket;
     }
 
