@@ -1,4 +1,4 @@
-package writer.file;
+package webserver.handler;
 
 import extractor.http.FileTypeExtractor;
 

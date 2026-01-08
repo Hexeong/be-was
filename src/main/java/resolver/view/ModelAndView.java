@@ -4,7 +4,7 @@ import model.Model;
 import model.http.HttpRequest;
 import model.http.HttpResponse;
 import model.http.HttpStatus;
-import writer.file.StaticResourceType;
+import webserver.handler.StaticResourceType;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;

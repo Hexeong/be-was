@@ -6,7 +6,6 @@ import model.http.HttpResponse;
 import model.http.HttpStatus;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import writer.file.StaticResourceType;
 
 import java.io.IOException;
 import java.nio.file.Files;
