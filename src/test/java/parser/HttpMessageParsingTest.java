@@ -22,7 +22,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
-public class HttpMessageParserIntegrationTest {
+public class HttpMessageParsingTest {
 
     private static List<HttpRequestTestCase> testCases; // [AI를 사용해 테스트 값 생성]
 
@@ -125,7 +125,7 @@ public class HttpMessageParserIntegrationTest {
 
             // 5. Body 검증 (Body가 있는 경우만)
             if (testCase.expectedBody != null) {
-                assertThat(result.body().getBodyText()).isEqualTo(testCase.expectedBody);
+                assertThat(result.bodyText()).isEqualTo(testCase.expectedBody);
             }
         }
     }
