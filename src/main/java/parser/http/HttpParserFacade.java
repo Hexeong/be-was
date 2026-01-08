@@ -1,6 +1,5 @@
 package parser.http;
 
-import model.http.HttpBody;
 import model.http.HttpStartLine;
 import model.http.HttpRequest;
 import parser.http.impl.HttpBodyParser;
@@ -18,12 +17,12 @@ public class HttpParserFacade {
     public static HttpRequest parse(InputStream in) throws IOException {
         HttpStartLine startLine = HttpStartLineParser.parse(in);
         Map<String, String> header = HttpHeaderParser.parse(in);
-        HttpBody body = HttpBodyParser.parse(in, header);
+        String bodyText = HttpBodyParser.parse(in, header);
 
         return new HttpRequest(
                 startLine,
                 header,
-                body
+                bodyText
         );
     }
 }

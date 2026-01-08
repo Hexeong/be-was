@@ -5,7 +5,7 @@ import java.util.Map;
 public record HttpRequest(
         HttpStartLine line,
         Map<String, String> headers,
-        HttpBody body
+        String bodyText
 ) {
     public HttpRequest() {
         this(null, null, null);
@@ -22,6 +22,6 @@ public record HttpRequest(
                 
                 body: %s
                 """
-                .formatted(line.getMethod(), line.getPathUrl(), headers.toString(), body);
+                .formatted(line.getMethod(), line.getPathUrl(), headers.toString(), bodyText);
     }
 }
