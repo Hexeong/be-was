@@ -33,7 +33,7 @@ public class UserRequestTest {
                         "Content-Type", "application/x-www-form-urlencoded",
                         "Accept", "*/*"),
                 "userId=javajigi&password=password&name=%EB%B0%95%EC%9E%AC%EC%84%B1&email=javajigi%40slipp.net");
-        HttpResponse res = new HttpResponse();
+        HttpResponse res = new HttpResponse(out);
 
         // when
         BusinessHandler handler = TotalRouteMapping.route(req);
@@ -41,7 +41,7 @@ public class UserRequestTest {
         // then
         Assertions.assertNotNull(handler);
         Assertions.assertDoesNotThrow(() -> handler.execute(req, res).resolve(req, res));
-        res.sendResponse(out);
+        res.sendResponse();
         assertThat(out.toString())
                 .contains("302")
                 .contains("Found")
@@ -87,7 +87,7 @@ public class UserRequestTest {
                         "Content-Type", "application/x-www-form-urlencoded",
                         "Accept", "*/*"),
                 "userId=javajigi&password=password&name=%EB%B0%95%EC%9E%AC%EC%84%B1&email=javajigi%40slipp.net");
-        HttpResponse res = new HttpResponse();
+        HttpResponse res = new HttpResponse(out);
 
         // when
         BusinessHandler handler = TotalRouteMapping.route(req);
@@ -95,7 +95,7 @@ public class UserRequestTest {
         // when & then
         Assertions.assertNotNull(handler);
         Assertions.assertDoesNotThrow(() -> handler.execute(req, res).resolve(req, res));
-        res.sendResponse(out);
+        res.sendResponse();
         assertThat(out.toString())
                 .contains("302")
                 .contains("Found")

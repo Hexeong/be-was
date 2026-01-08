@@ -33,7 +33,7 @@ public class RawRequestHandler implements Runnable {
                 try {
                     // 1. request parsing
                     HttpRequest req = HttpParserFacade.parse(in);
-                    HttpResponse res = new HttpResponse();
+                    HttpResponse res = new HttpResponse(out);
 
                     log.debug(req.toString());
 
@@ -42,7 +42,7 @@ public class RawRequestHandler implements Runnable {
 
                     if (handler == null) {
                         ResourceResponseHandler.handle(req, res);
-                        res.sendResponse(out);
+                        res.sendResponse();
                         continue;
                     }
 
@@ -52,7 +52,7 @@ public class RawRequestHandler implements Runnable {
 
                     mv.resolve(req, res);
 
-                    res.sendResponse(out);
+                    res.sendResponse();
                 } catch (SocketTimeoutException e) {
                     log.error(e.getMessage());
                     break;
