@@ -4,6 +4,7 @@ import java.io.*;
 import java.net.Socket;
 import java.net.SocketTimeoutException;
 
+import exception.CustomException;
 import model.http.HttpResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -33,14 +34,16 @@ public class RawRequestHandler implements Runnable {
                 try {
                     // 1. request parsing
                     HttpRequest req = HttpParserFacade.parse(in);
-                    HttpResponse res = new HttpResponse(out);
+                    HttpResponse res = new HttpResponse(req, out);
 
                     log.debug(req.toString());
 
-                    if (context.doDispatch(req, res))
+                    try {
+                        context.doDispatch(req, res);
                         res.sendResponse();
-                    else
-                        res.send500ErrorResopnse();
+                    } catch (CustomException e) {
+                        res.sendExceptionResponse(e);
+                    }
 
                 } catch (SocketTimeoutException e) {
                     log.error(e.getMessage());
