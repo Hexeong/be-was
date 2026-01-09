@@ -68,7 +68,8 @@ public final class HttpResponse {
         DataOutputStream dos = new DataOutputStream(this.out);
 
         this.status = e.getCode().getStatus();
-        this.body = (e.getCode().getMessage() + e.getSpecificMessage()).getBytes(StandardCharsets.UTF_8);
+        this.body = (e.getCode().getMessage() + " " + e.getSpecificMessage()).getBytes(StandardCharsets.UTF_8);
+        this.headers.put("Content-Type", "text/plain; charset=utf-8");
 
         writeHeader(dos);
         writeBody(dos);
@@ -97,11 +98,11 @@ public final class HttpResponse {
         }
     }
 
-    public HttpVersion version() {
+    public HttpVersion getVersion() {
         return version;
     }
 
-    public HttpStatus status() {
+    public HttpStatus getStatus() {
         return status;
     }
 

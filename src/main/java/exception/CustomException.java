@@ -10,7 +10,7 @@ public class CustomException extends RuntimeException {
     }
 
     public CustomException(ErrorCode code, String specificMessage) {
-        super(specificMessage); // [수정] super가 가장 먼저 와야 합니다.
+        super(specificMessage);
         this.code = code;
         this.specificMessage = specificMessage;
     }

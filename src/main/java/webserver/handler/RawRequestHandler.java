@@ -32,7 +32,6 @@ public class RawRequestHandler implements Runnable {
 
             while(true) {
                 try {
-                    // 1. request parsing
                     HttpRequest req = HttpParserFacade.parse(in);
                     HttpResponse res = new HttpResponse(req, out);
 

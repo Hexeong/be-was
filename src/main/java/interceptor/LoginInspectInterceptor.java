@@ -9,8 +9,6 @@ import handler.HandlerMethod;
 import model.http.HttpRequest;
 import model.http.HttpResponse;
 
-import java.io.IOException;
-
 public class LoginInspectInterceptor implements Interceptor {
 
     private static final String COOKIE_SESSION_ID = "sid";

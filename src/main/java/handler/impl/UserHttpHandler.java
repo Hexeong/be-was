@@ -30,6 +30,8 @@ public class UserHttpHandler implements DynamicHttpHandler {
     @RequestMapping(method = RequestMethod.POST, path = "/user/create")
     public ModelAndView createUser(HttpResponse res, User user) {
 
+        // TODO:: 방어로직 필요
+
         Database.addUser(user);
 
         setSessionCookie(res, user);
@@ -39,6 +41,8 @@ public class UserHttpHandler implements DynamicHttpHandler {
 
     @RequestMapping(method = RequestMethod.POST, path = "/user/login")
     public ModelAndView login(HttpResponse res, User user) {
+
+        // TODO:: 방어로직 필요
 
         User findUser = Database.findUserById(user.getUserId());
         if (findUser != null && findUser.getPassword().equals(user.getPassword())) {
