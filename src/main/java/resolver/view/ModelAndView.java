@@ -24,6 +24,13 @@ public record ModelAndView(
 
     private static final String TEMPLATE_ROOT = "./src/main/resources/static";
 
+    public ModelAndView(String viewName) {
+        this(
+                new Model(),
+                viewName
+        );
+    }
+
     public void resolve(HttpRequest req, HttpResponse res) throws IOException {
         // 여기서는 byte[]를 만들어야 함.
         // viewName을 보고 File을 읽어온 다음, Model에 있는 값에 대해 적용하는 방식

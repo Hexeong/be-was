@@ -21,22 +21,19 @@ public class DynamicPageHttpHandler implements DynamicHttpHandler {
     public DynamicPageHttpHandler() {}
 
     @RequestMapping(method = RequestMethod.GET, path = {"/", "/index.html"})
-    public ModelAndView indexPage(HttpRequest req) {
-        Model model = new Model();
+    public ModelAndView indexPage(HttpRequest req, Model model) {
         setLoginStatus(req, model);
         return new ModelAndView(model, "/index.html");
     }
 
     @RequestMapping(method = RequestMethod.GET, path = {"/registration", "/registration/index.html"})
-    public ModelAndView registrationPage(HttpRequest req) {
-        Model model = new Model();
+    public ModelAndView registrationPage(HttpRequest req, Model model) {
         setLoginStatus(req, model);
         return new ModelAndView(model, "/registration/index.html");
     }
 
     @RequestMapping(method = RequestMethod.GET, path = {"/login", "/login/index.html"})
-    public ModelAndView loginPage(HttpRequest req) {
-        Model model = new Model();
+    public ModelAndView loginPage(HttpRequest req, Model model) {
         setLoginStatus(req, model);
         return new ModelAndView(model, "/login/index.html");
     }
