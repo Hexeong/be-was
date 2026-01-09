@@ -1,5 +1,6 @@
 package model.http;
 
+import exception.CustomException;
 import model.http.sub.HttpVersion;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -7,6 +8,7 @@ import org.slf4j.LoggerFactory;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -34,9 +36,9 @@ public final class HttpResponse {
         this.out = out;
     }
 
-    public HttpResponse(OutputStream out) {
+    public HttpResponse(HttpRequest req, OutputStream out) {
         this(
-                HttpVersion.HTTP_1_1,
+                req.line().getVersion(),
                 HttpStatus.OK,
                 new HashMap<>(),
                 new byte[0],
@@ -62,13 +64,11 @@ public final class HttpResponse {
         writeBody(dos);
     }
 
-    public void send500ErrorResopnse() {
+    public void sendExceptionResponse(CustomException e) {
         DataOutputStream dos = new DataOutputStream(this.out);
 
-        // clear 작업
-        this.status = HttpStatus.INTERNAL_SERVER_ERROR;
-        this.headers.clear();
-        this.body = new byte[0];
+        this.status = e.getCode().getStatus();
+        this.body = (e.getCode().getMessage() + e.getSpecificMessage()).getBytes(StandardCharsets.UTF_8);
 
         writeHeader(dos);
         writeBody(dos);
