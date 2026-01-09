@@ -1,5 +1,6 @@
 package handler.impl;
 
+import annotation.LoginRequired;
 import annotation.Router;
 import annotation.RequestMapping;
 import db.SessionStorage;
@@ -36,6 +37,13 @@ public class DynamicPageHttpHandler implements DynamicHttpHandler {
     public ModelAndView loginPage(HttpRequest req, Model model) {
         setLoginStatus(req, model);
         return new ModelAndView(model, "/login/index.html");
+    }
+
+    @LoginRequired
+    @RequestMapping(method = RequestMethod.GET, path = {"/mypage", "/mypage/index.html"})
+    public ModelAndView myPage(HttpRequest req, Model model) {
+        setLoginStatus(req, model);
+        return new ModelAndView(model, "/mypage/index.html");
     }
 
     private void setLoginStatus(HttpRequest req, Model model) {
