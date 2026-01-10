@@ -1,6 +1,4 @@
-package routing;
-
-import handler.HandlerMethod;
+package handler;
 
 import java.util.HashMap;
 import java.util.Map;

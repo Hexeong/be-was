@@ -4,7 +4,7 @@ import annotation.LoginRequired;
 import db.SessionStorage;
 import exception.CustomException;
 import exception.ErrorCode;
-import extractor.http.CookieExtractor;
+import util.extractor.CookieExtractor;
 import handler.HandlerMethod;
 import model.http.HttpRequest;
 import model.http.HttpResponse;

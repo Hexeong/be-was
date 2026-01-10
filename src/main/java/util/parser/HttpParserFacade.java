@@ -1,10 +1,7 @@
-package parser.http;
+package util.parser;
 
 import model.http.HttpStartLine;
 import model.http.HttpRequest;
-import parser.http.impl.HttpBodyParser;
-import parser.http.impl.HttpHeaderParser;
-import parser.http.impl.HttpStartLineParser;
 
 import java.io.IOException;
 import java.io.InputStream;

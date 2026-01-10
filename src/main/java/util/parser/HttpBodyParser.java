@@ -1,4 +1,4 @@
-package parser.http.impl;
+package util.parser;
 
 import java.io.IOException;
 import java.io.InputStream;

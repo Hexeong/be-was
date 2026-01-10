@@ -4,7 +4,7 @@ import annotation.LoginRequired;
 import annotation.Router;
 import annotation.RequestMapping;
 import db.SessionStorage;
-import extractor.http.CookieExtractor;
+import util.extractor.CookieExtractor;
 import model.Model;
 import model.http.HttpRequest;
 import model.http.sub.RequestMethod;

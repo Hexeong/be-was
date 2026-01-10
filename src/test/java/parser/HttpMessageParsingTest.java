@@ -6,7 +6,7 @@ import model.http.sub.HttpVersion;
 import model.http.sub.RequestMethod;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-import parser.http.HttpParserFacade;
+import util.parser.HttpParserFacade;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
