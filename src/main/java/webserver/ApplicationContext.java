@@ -55,16 +55,16 @@ public class ApplicationContext {
 
         // 어댑터: HandlerAdapter 인터페이스를 구현한 클래스 스캔
         this.adapterList = scanPackage(HANDLER_ADAPTER_PACKAGE_PATH,
-                clazz -> HandlerAdapter.class.isAssignableFrom(clazz),
+                HandlerAdapter.class::isAssignableFrom,
                 this);
 
         // 인터셉터: Interceptor 인터페이스를 구현한 클래스 스캔
         this.interceptorList = scanPackage(INTERCEPTOR_PACKAGE_PATH,
-                clazz -> Interceptor.class.isAssignableFrom(clazz));
+                Interceptor.class::isAssignableFrom);
 
         // 알규먼트 리졸버: ArgumentResolver 인터페이스를 구현한 클래스 스캔
         this.argumentResolverList = scanPackage(ARGUMENT_RESOLVER_PACKAGE_PATH,
-                clazz -> ArgumentResolver.class.isAssignableFrom(clazz));
+                ArgumentResolver.class::isAssignableFrom);
 
         // 2. 스캔된 핸들러를 기반으로 매핑 정보 생성
         initMapping();
@@ -170,17 +170,14 @@ public class ApplicationContext {
     }
 
     public HandlerExecutionChain getHandler(HttpRequest req) {
-        // HandlerMapping에서 요청에 맞는 HandlerMethod를 찾아옴
         RouteKey routeKey = new RouteKey(req.line().getMethod(), req.line().getPathUrl());
         Object handler = mapping.getHandler(routeKey); // HandlerMethod가 Object 타입으로 반환됨
 
-        // 핸들러가 없으면 404 예외 처리 등이 필요할 수 있음
-        if (handler == null) {
+        if (handler == null) { // requestMethod, urlPath 둘다 맞지 않은 경우 정적 처리 핸들러로 이동
             return null;
         }
 
-        // interceptor 로직 (모든 인터셉터 포함 예시)
-        // 실제로는 URL 패턴 매칭 등을 통해 필터링 해야 함
+        // TODO:: interceptorList 중 urlPath에 맞는 경우만 추가
         List<Interceptor> possibleInterceptorList = new ArrayList<>(this.interceptorList);
 
         return new HandlerExecutionChain(possibleInterceptorList, handler);
