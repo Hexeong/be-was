@@ -1,4 +1,4 @@
-package routing;
+package handler;
 
 import model.http.sub.RequestMethod;
 

@@ -1,4 +1,4 @@
-package extractor.http;
+package util.extractor;
 
 import model.http.HttpRequest;
 

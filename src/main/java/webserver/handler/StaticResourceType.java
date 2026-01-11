@@ -1,6 +1,6 @@
 package webserver.handler;
 
-import extractor.http.FileTypeExtractor;
+import util.extractor.FileTypeExtractor;
 
 import java.util.Arrays;
 

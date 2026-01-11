@@ -1,6 +1,6 @@
 package webserver.handler;
 
-import extractor.http.FileTypeExtractor;
+import util.extractor.FileTypeExtractor;
 import model.http.HttpRequest;
 import model.http.HttpResponse;
 import model.http.HttpStatus;

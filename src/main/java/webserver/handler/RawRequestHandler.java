@@ -9,7 +9,7 @@ import model.http.HttpResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import model.http.HttpRequest;
-import parser.http.HttpParserFacade;
+import util.parser.HttpParserFacade;
 import webserver.ApplicationContext;
 
 public class RawRequestHandler implements Runnable {

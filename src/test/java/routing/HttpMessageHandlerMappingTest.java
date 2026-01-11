@@ -46,7 +46,7 @@ class HttpMessageHandlerMappingTest {
                 Map.of("Host", "localhost:8080"),
                 "userId=javajigi&password=password&name=%EB%B0%95%EC%9E%AC%EC%84%B1&email=javajigi%40slipp.net"
         );
-        HttpResponse res = new HttpResponse(out);
+        HttpResponse res = new HttpResponse(req, out);
 
         // when
         // 1. 요청을 처리할 핸들러(체인) 조회
@@ -89,7 +89,7 @@ class HttpMessageHandlerMappingTest {
                 Map.of("Host", "localhost:8080"),
                 null
         );
-        HttpResponse res = new HttpResponse(out);
+        HttpResponse res = new HttpResponse(req, out);
 
         // when
         // 정적 파일은 @RequestMapping에 등록되지 않았으므로 null이어야 함
@@ -124,7 +124,7 @@ class HttpMessageHandlerMappingTest {
                 Map.of("Host", "localhost:8080"),
                 null
         );
-        HttpResponse res = new HttpResponse(out);
+        HttpResponse res = new HttpResponse(req, out);
 
         // when
         HandlerExecutionChain chain = context.getHandler(req);
