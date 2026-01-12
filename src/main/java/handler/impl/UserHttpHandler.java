@@ -8,7 +8,7 @@ import util.extractor.CookieExtractor;
 import model.http.HttpRequest;
 import model.http.HttpResponse;
 import model.http.sub.RequestMethod;
-import model.user.User;
+import model.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import resolver.view.ModelAndView;

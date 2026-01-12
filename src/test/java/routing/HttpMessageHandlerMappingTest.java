@@ -10,7 +10,7 @@ import model.http.HttpRequest;
 import model.http.HttpResponse;
 import model.http.sub.HttpVersion;
 import model.http.sub.RequestMethod;
-import model.user.User;
+import model.User;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import resolver.view.ModelAndView;
