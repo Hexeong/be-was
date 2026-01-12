@@ -18,25 +18,29 @@ public final class HttpResponse {
     private HttpStatus status;
     private Map<String, String> headers;
     private byte[] body;
+    private OutputStream out;
 
     public HttpResponse(
             HttpVersion version,
             HttpStatus status,
             Map<String, String> headers,
-            byte[] body
+            byte[] body,
+            OutputStream out
     ) {
         this.version = version;
         this.status = status;
         this.headers = headers;
         this.body = body;
+        this.out = out;
     }
 
-    public HttpResponse() {
+    public HttpResponse(OutputStream out) {
         this(
                 HttpVersion.HTTP_1_1,
                 HttpStatus.OK,
                 new HashMap<>(),
-                new byte[0]
+                new byte[0],
+                out
         );
     }
 
@@ -52,8 +56,20 @@ public final class HttpResponse {
         this.status = status;
     }
 
-    public void sendResponse(OutputStream out) {
-        DataOutputStream dos = new DataOutputStream(out);
+    public void sendResponse() {
+        DataOutputStream dos = new DataOutputStream(this.out);
+        writeHeader(dos);
+        writeBody(dos);
+    }
+
+    public void send500ErrorResopnse() {
+        DataOutputStream dos = new DataOutputStream(this.out);
+
+        // clear 작업
+        this.status = HttpStatus.INTERNAL_SERVER_ERROR;
+        this.headers.clear();
+        this.body = new byte[0];
+
         writeHeader(dos);
         writeBody(dos);
     }
@@ -121,5 +137,4 @@ public final class HttpResponse {
                 "headers=" + headers + ", " +
                 "body=" + body + ']';
     }
-
 }

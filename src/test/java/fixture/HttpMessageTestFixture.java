@@ -1,6 +1,5 @@
 package fixture;
 
-import model.http.HttpBody;
 import model.http.HttpStartLine;
 import model.http.HttpRequest;
 import model.http.sub.HttpVersion;
@@ -101,6 +100,6 @@ public class HttpMessageTestFixture {
         return new HttpRequest(
                 new HttpStartLine(method, pathUrl, queryParameterList, version),
                 headers,
-                new HttpBody(body));
+                body);
     }
 }

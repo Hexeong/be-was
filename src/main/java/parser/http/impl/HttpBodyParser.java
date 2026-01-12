@@ -1,7 +1,5 @@
 package parser.http.impl;
 
-import model.http.HttpBody;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
@@ -13,7 +11,7 @@ public class HttpBodyParser {
 
     private static final String CONTENT_LENGTH_KEY = "content-length";
 
-    public static HttpBody parse(InputStream in, Map<String, String> headers) throws IOException {
+    public static String parse(InputStream in, Map<String, String> headers) throws IOException {
         // [RFC 9112 Section 6.1]
         // TODO:: Transfer-Encoding 헤더가 있으면 Content-Length는 무조건 무시해야 함.
         //        만약 둘 다 있는데 Transfer-Encoding이 chunked가 아니라면 에러를 뱉거나 연결을 닫는 것이 원칙
@@ -24,10 +22,10 @@ public class HttpBodyParser {
 
         // [RFC 9112 Section 6.3]
         // 요청(Request)에서 Content-Length도 없고 Transfer-Encoding도 없으면 Body 길이는 0이다.
-        return new HttpBody("");
+        return "";
     }
 
-    private static HttpBody parseFixedLengthBody(InputStream inputStream, Map<String, String> headers) throws IOException {
+    private static String parseFixedLengthBody(InputStream inputStream, Map<String, String> headers) throws IOException {
         try {
             int contentLength = Integer.parseInt(headers.get(CONTENT_LENGTH_KEY));
 
@@ -43,7 +41,7 @@ public class HttpBodyParser {
             }
 
             // 3. 바이트를 다 읽은 후 문자열로 변환 (여기서 인코딩 지정)
-            return new HttpBody(new String(bodyBytes, StandardCharsets.UTF_8));
+            return new String(bodyBytes, StandardCharsets.UTF_8);
 
         } catch (NumberFormatException e) {
             throw new IOException("Invalid Content-Length format", e);

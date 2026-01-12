@@ -1,56 +1,50 @@
-package business;
+package handler.impl;
 
+import annotation.Router;
+import annotation.RequestMapping;
 import db.Database;
 import db.SessionStorage;
 import extractor.http.CookieExtractor;
 import model.Model;
 import model.http.HttpRequest;
 import model.http.HttpResponse;
+import model.http.sub.RequestMethod;
 import model.user.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import resolver.view.ModelAndView;
 
-import java.util.Map;
 import java.util.concurrent.ThreadLocalRandom;
 
-public class UserBusinessLogic {
-    private static final Logger log = LoggerFactory.getLogger(UserBusinessLogic.class);
+@Router
+public class UserHttpHandler implements DynamicHttpHandler {
+    private static final Logger log = LoggerFactory.getLogger(UserHttpHandler.class);
 
     private static final String COOKIE_HEADER_KEY = "Set-Cookie";
     private static final String COOKIE_HEADER_PREFIX = "sid=";
     private static final String SESSION_ID_KEY = "sid";
     private static final String COOKIE_HEADER_SUFFIX = "; Path=/";
 
-    public ModelAndView createUser(HttpRequest req, HttpResponse res) {
-        Map<String, String> formData = req.body().getParsedBody(Map.class);
+    public UserHttpHandler() {}
 
-        User user = new User(
-                formData.getOrDefault("userId", ""),
-                formData.getOrDefault("password", ""),
-                formData.getOrDefault("name", ""),
-                formData.getOrDefault("email", "")
-        );
+    @RequestMapping(method = RequestMethod.POST, path = "/user/create")
+    public ModelAndView createUser(HttpRequest req, HttpResponse res, User user) {
+
         Database.addUser(user);
-
-        log.debug(user.toString());
 
         setSessionCookie(res, user);
 
         return new ModelAndView(new Model(), "redirect:/");
     }
 
-    public ModelAndView login(HttpRequest req, HttpResponse res) {
-        Map<String, String> formData = req.body().getParsedBody(Map.class);
+    @RequestMapping(method = RequestMethod.POST, path = "/user/login")
+    public ModelAndView login(HttpRequest req, HttpResponse res, User user) {
 
-        User findUser = Database.findUserById(formData.getOrDefault("userId", ""));
-        if (findUser != null && findUser.getPassword().equals(formData.getOrDefault("password", ""))) {
-            log.debug("로그인 성공");
+        User findUser = Database.findUserById(user.getUserId());
+        if (findUser != null && findUser.getPassword().equals(user.getPassword())) {
             setSessionCookie(res, findUser);
             return new ModelAndView(null, "redirect:/");
         }
-
-        log.debug("로그인 실패! \n" + findUser + "\n" + req.body().getBodyText());
         return new ModelAndView(new Model(), "redirect:/login");
     }
 

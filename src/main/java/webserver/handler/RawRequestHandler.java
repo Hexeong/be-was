@@ -4,22 +4,22 @@ import java.io.*;
 import java.net.Socket;
 import java.net.SocketTimeoutException;
 
-import business.BusinessHandler;
 import model.http.HttpResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import model.http.HttpRequest;
 import parser.http.HttpParserFacade;
-import resolver.view.ModelAndView;
-import routing.TotalRouteMapping;
+import webserver.ApplicationContext;
 
-public class RequestHandler implements Runnable {
-    private static final Logger log = LoggerFactory.getLogger(RequestHandler.class);
+public class RawRequestHandler implements Runnable {
+    private static final Logger log = LoggerFactory.getLogger(RawRequestHandler.class);
 
     private Socket connection;
+    private ApplicationContext context;
 
-    public RequestHandler(Socket connectionSocket) {
+    public RawRequestHandler(Socket connectionSocket, ApplicationContext context) {
         this.connection = connectionSocket;
+        this.context = context;
     }
 
     public void run() {
@@ -33,26 +33,15 @@ public class RequestHandler implements Runnable {
                 try {
                     // 1. request parsing
                     HttpRequest req = HttpParserFacade.parse(in);
-                    HttpResponse res = new HttpResponse();
+                    HttpResponse res = new HttpResponse(out);
 
                     log.debug(req.toString());
 
-                    // Handler를 가져온다. 처리 결과가 ViewName 또는 HttpResponse
-                    BusinessHandler handler = TotalRouteMapping.route(req);
+                    if (context.doDispatch(req, res))
+                        res.sendResponse();
+                    else
+                        res.send500ErrorResopnse();
 
-                    if (handler == null) {
-                        ResourceResponseHandler.handle(req, res);
-                        res.sendResponse(out);
-                        continue;
-                    }
-
-                    ModelAndView mv = handler.execute(req, res);
-
-                    // TODO:: forward에 대한 처리를 할경우, 다시 route부터 실행해야 한다.
-
-                    mv.resolve(req, res);
-
-                    res.sendResponse(out);
                 } catch (SocketTimeoutException e) {
                     log.error(e.getMessage());
                     break;

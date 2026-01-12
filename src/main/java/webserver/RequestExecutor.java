@@ -1,6 +1,6 @@
 package webserver;
 
-import webserver.handler.RequestHandler;
+import webserver.handler.RawRequestHandler;
 
 import java.net.Socket;
 import java.util.concurrent.ExecutorService;
@@ -11,7 +11,7 @@ public class RequestExecutor {
 
     RequestExecutor() {}
 
-    public static void submit(Socket connection) {
-        executorService.submit(new RequestHandler(connection));
+    public static void submit(Socket connection, ApplicationContext context) {
+        executorService.submit(new RawRequestHandler(connection, context));
     }
 }
