@@ -20,19 +20,18 @@ public class Dispatcher {
         this.context = context;
     }
 
-    public boolean doDispatch(HttpRequest req, HttpResponse res) throws IOException {
+    public void doDispatch(HttpRequest req, HttpResponse res) throws IOException {
         HandlerExecutionChain mappedHandler = context.getHandler(req);
 
         if (mappedHandler == null) {
             ResourceResponseHandler.handle(req, res);
-            return true;
+            return;
         }
 
         HandlerAdapter ha = context.getHandlerAdapter(mappedHandler.getHandler());
 
         if (!mappedHandler.applyPreHandle(req, res)) {
-            // Interceptor들 실행 중 false를 만나면 handle()하면 안되기에 return으로 종료
-            return false;
+            return;
         }
 
         ModelAndView mv = ha.handle(req, res, mappedHandler.getHandler());
@@ -40,11 +39,9 @@ public class Dispatcher {
         // TODO:: forward에 대한 처리를 할경우, 다시 route부터 실행해야 한다.
 
         if (!mappedHandler.applyPostHandle(req, res)) {
-            return false;
+            return;
         }
 
         mv.resolve(req, res);
-
-        return true;
     }
 }

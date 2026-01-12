@@ -165,8 +165,8 @@ public class ApplicationContext {
         return instances;
     }
 
-    public boolean doDispatch(HttpRequest req, HttpResponse res) throws IOException {
-        return dispatcher.doDispatch(req, res);
+    public void doDispatch(HttpRequest req, HttpResponse res) throws IOException {
+        dispatcher.doDispatch(req, res);
     }
 
     public HandlerExecutionChain getHandler(HttpRequest req) {

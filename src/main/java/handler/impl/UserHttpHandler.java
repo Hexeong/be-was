@@ -28,30 +28,35 @@ public class UserHttpHandler implements DynamicHttpHandler {
     public UserHttpHandler() {}
 
     @RequestMapping(method = RequestMethod.POST, path = "/user/create")
-    public ModelAndView createUser(HttpRequest req, HttpResponse res, User user) {
+    public ModelAndView createUser(HttpResponse res, User user) {
+
+        // TODO:: 방어로직 필요
 
         Database.addUser(user);
 
         setSessionCookie(res, user);
 
-        return new ModelAndView(new Model(), "redirect:/");
+        return new ModelAndView("redirect:/");
     }
 
     @RequestMapping(method = RequestMethod.POST, path = "/user/login")
-    public ModelAndView login(HttpRequest req, HttpResponse res, User user) {
+    public ModelAndView login(HttpResponse res, User user) {
+
+        // TODO:: 방어로직 필요
 
         User findUser = Database.findUserById(user.getUserId());
         if (findUser != null && findUser.getPassword().equals(user.getPassword())) {
             setSessionCookie(res, findUser);
             return new ModelAndView(null, "redirect:/");
         }
-        return new ModelAndView(new Model(), "redirect:/login");
+        return new ModelAndView( "redirect:/login");
     }
 
+    @RequestMapping(method = RequestMethod.GET, path = "/user/logout")
     public ModelAndView logout(HttpRequest req, HttpResponse res) {
         expireSessionCookie(res);
         SessionStorage.removeSession(CookieExtractor.getValue(req, SESSION_ID_KEY));
-        return new ModelAndView(new Model(), "redirect:/");
+        return new ModelAndView( "redirect:/");
     }
 
     private void setSessionCookie(HttpResponse res, User user) {

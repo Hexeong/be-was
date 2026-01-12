@@ -5,6 +5,7 @@ import extractor.http.FileTypeExtractor;
 import java.util.Arrays;
 
 public enum StaticResourceType {
+    // TODO:: MimeType으로 변경해서 통합 관리 필요
     HTML("html", "text/html; charset=utf-8"),
     CSS("css", "text/css"),
     JS("js", "text/javascript"),

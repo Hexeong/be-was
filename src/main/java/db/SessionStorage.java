@@ -13,6 +13,7 @@ public class SessionStorage {
     }
 
     public static User findUserBySid(String sid) {
+        if (sid == null || sid.isEmpty()) return null;
         return sessionStore.getOrDefault(sid, null);
     }
 

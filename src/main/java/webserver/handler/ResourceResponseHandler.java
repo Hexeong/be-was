@@ -20,12 +20,13 @@ public class ResourceResponseHandler {
     private static final String TEMPLATE_ROOT = "./src/main/resources/static";
 
     public static void handle(HttpRequest req, HttpResponse res) throws IOException {
+        // TODO:: 전역으로 CustomException을 처리하는 방식을 활용하기
+
         if (!StaticResourceType.isStaticResourceByUrl(req.line().getPathUrl())) {
             req.line().addIndexHtml();
         }
 
         if (req.line().getPathUrl().contains("..")) {
-            // 404 처리
             log.error("이전 폴더 접근 문법 사용!");
             res.setStatus(HttpStatus.NOT_FOUND);
             return;
@@ -33,7 +34,6 @@ public class ResourceResponseHandler {
 
         Path path = Paths.get(TEMPLATE_ROOT, req.line().getPathUrl());
         if (!Files.exists(path)) {
-            // 404 처리
             log.error("파일 없음! " + path);
             res.setStatus(HttpStatus.NOT_FOUND);
             return;
