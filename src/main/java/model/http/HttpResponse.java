@@ -36,6 +36,16 @@ public final class HttpResponse {
         this.out = out;
     }
 
+    public HttpResponse(OutputStream out) {
+        this(
+                HttpVersion.HTTP_1_1,
+                HttpStatus.OK,
+                new HashMap<>(),
+                new byte[0],
+                out
+        );
+    }
+
     public HttpResponse(HttpRequest req, OutputStream out) {
         this(
                 req.line().getVersion(),

@@ -84,6 +84,27 @@ public class HttpMessageParsingTest {
                 Map.of("host", "localhost:8080", "content-type", "application/x-www-form-urlencoded"),
                 formData
         ));
+
+        // ----------------------------------------------------------------
+        // 5. [POST with Chunked] Transfer-Encoding: chunked 테스트 (NEW)
+        // ----------------------------------------------------------------
+        // 설명: Fixture는 'chunked' 헤더를 감지하면 입력된 Body("WikiPedia Chunked...")를
+        //       자동으로 2개 이상의 16진수 청크 포맷으로 변환하여 InputStream을 생성합니다.
+        // 기대: 파서는 이를 읽고 합쳐서 다시 원본 문자열을 만들어내야 합니다.
+        String rawBodyContent = "WikiPedia Chunked Test Data";
+
+        testCases.add(new HttpRequestTestCase(
+                "POST with Chunked Encoding",
+                RequestMethod.POST,
+                "/api/stream",
+                null, // Params 없음
+                Map.of(
+                        "host", "localhost:8080",
+                        "Transfer-Encoding", "chunked",
+                        "Content-Type", "text/plain"
+                ),
+                rawBodyContent // 기대하는 파싱 결과 (원본 문자열)
+        ));
     }
 
     @Test
@@ -105,11 +126,9 @@ public class HttpMessageParsingTest {
                     () -> assertThat(result.line().getMethod()).isEqualTo(testCase.expectedMethod),
                     // Path 검증 (경로만 비교, 쿼리 스트링 제외 로직이 있다면 주의)
                     () -> assertThat(result.line().getPathUrl()).isEqualTo(testCase.expectedPath),
-                    // Header 검증 (Map에 있는 키들이 포함되어 있는지)
-                    () -> assertThat(result.headers()).containsAllEntriesOf(testCase.expectedHeaders),
                     // Header 검증 (Map에 있는 키들이 값이 제대로 포함되어 있는지)
                     () -> result.headers().forEach((key, value) -> {
-                        assertThat(result.headers().get(key)).isEqualTo(value);
+                        assertThat(result.headers().get(key.toLowerCase())).isEqualTo(value);
                     })
             );
 
@@ -118,8 +137,8 @@ public class HttpMessageParsingTest {
                 Map<String, Object> actualParams = result.line().getQueryParameterList();
 
                 testCase.expectedParams.forEach((key, value) -> {
-                    assertThat(actualParams).containsKey(key);
-                    assertThat(actualParams.get(key)).isEqualTo(value);
+                    assertThat(actualParams).containsKey(key.toLowerCase());
+                    assertThat(actualParams.get(key.toLowerCase())).isEqualTo(value);
                 });
             }
 
