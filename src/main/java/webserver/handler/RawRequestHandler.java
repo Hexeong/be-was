@@ -42,7 +42,7 @@ public class RawRequestHandler implements Runnable {
                     res.sendResponse();
 
                 } catch (CustomException e) {
-                    res.sendExceptionResponse(e);
+                    ErrorResponseHandler.responseError(res, e);
                 } catch (SocketTimeoutException e) {
                     log.error(e.getMessage());
                     break;

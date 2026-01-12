@@ -8,7 +8,6 @@ import org.slf4j.LoggerFactory;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -70,17 +69,6 @@ public final class HttpResponse {
 
     public void sendResponse() {
         DataOutputStream dos = new DataOutputStream(this.out);
-        writeHeader(dos);
-        writeBody(dos);
-    }
-
-    public void sendExceptionResponse(CustomException e) {
-        DataOutputStream dos = new DataOutputStream(this.out);
-
-        this.status = e.getCode().getStatus();
-        this.body = (e.getCode().getMessage() + " " + e.getSpecificMessage()).getBytes(StandardCharsets.UTF_8);
-        this.headers.put("Content-Type", "text/plain; charset=utf-8");
-
         writeHeader(dos);
         writeBody(dos);
     }

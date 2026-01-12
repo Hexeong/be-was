@@ -1,6 +1,7 @@
 package routing;
 
 import db.Database;
+import exception.CustomException;
 import fixture.HttpMessageTestFixture;
 import handler.HandlerExecutionChain;
 import handler.HandlerMethod;
@@ -20,8 +21,7 @@ import java.io.ByteArrayOutputStream;
 import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertAll;
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.*;
 
 class HttpMessageHandlerMappingTest {
 
@@ -103,7 +103,7 @@ class HttpMessageHandlerMappingTest {
         // then
         // 1. 매핑된 동적 핸들러가 없음을 검증
         assertThat(chain).isNotNull();
-        assertDoesNotThrow(() -> mv.resolve(req, res));
+        assertDoesNotThrow(() -> mv.resolve(res));
 
         res.sendResponse();
 
@@ -131,10 +131,6 @@ class HttpMessageHandlerMappingTest {
 
         // then
         assertThat(chain).isNull();
-        assertDoesNotThrow(() -> ResourceResponseHandler.handle(req, res));
-        res.sendResponse();
-
-        assertThat(out.toString())
-                .contains("HTTP/1.1 404 Not Found");
+        assertThrows(CustomException.class, () -> ResourceResponseHandler.handle(req, res));
     }
 }

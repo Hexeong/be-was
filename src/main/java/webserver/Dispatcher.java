@@ -42,6 +42,6 @@ public class Dispatcher {
             return;
         }
 
-        mv.resolve(req, res);
+        mv.resolve(res);
     }
 }
