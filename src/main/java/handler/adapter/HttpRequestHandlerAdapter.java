@@ -61,7 +61,7 @@ public class HttpRequestHandlerAdapter implements HandlerAdapter {
 
         try {
             // 3. 리플렉션으로 메서드 실행 (인자값 주입)
-            return (ModelAndView) method.invoke(instance, args);
+            return (ModelAndView) hm.invoke(args);
         } catch (Exception e) {
             throw new RuntimeException("Handler execution failed", e);
         }

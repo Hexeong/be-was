@@ -18,4 +18,8 @@ public class HandlerMethod {
     public Method getHandlerMethod() {
         return handlerMethod;
     }
+
+    public Object invoke(Object[] args) throws Exception {
+        return handlerMethod.invoke(handlerInstance, args);
+    }
 }
