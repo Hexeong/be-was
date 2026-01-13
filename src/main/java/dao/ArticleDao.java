@@ -120,13 +120,45 @@ public class ArticleDao {
         }
     }
 
-    public static void increaseLikeCnt(String articleId) {
-        String sql = "UPDATE ARTICLE SET likeCnt = likeCnt + 1 WHERE articleId = ?";
-        executeUpdate(sql, articleId);
+    /**
+     * 특정 articleId가 최신순(createdAt DESC)으로 정렬했을 때 몇 번째 인덱스인지 반환합니다.
+     * @param articleId 찾으려는 게시글 ID
+     * @return 0부터 시작하는 인덱스 (찾지 못한 경우 -1 반환)
+     */
+    public static int findIndexByArticleId(String articleId) {
+        // ROW_NUMBER()를 사용하여 정렬 순서대로 번호를 매긴 후, 해당 articleId의 번호를 조회
+        String sql = "SELECT rnum FROM (" +
+                "    SELECT articleId, ROW_NUMBER() OVER (ORDER BY createdAt DESC) as rnum " +
+                "    FROM ARTICLE" +
+                ") t WHERE articleId = ?";
+
+        Connection conn = null;
+        PreparedStatement pstmt = null;
+        ResultSet rs = null;
+
+        try {
+            conn = TransactionManager.getConnection();
+            pstmt = conn.prepareStatement(sql);
+            pstmt.setString(1, articleId);
+            rs = pstmt.executeQuery();
+
+            if (rs.next()) {
+                return rs.getInt(1) - 1;
+            }
+
+            return -1; // 해당 articleId가 존재하지 않을 경우
+
+        } catch (SQLException e) {
+            throw new RuntimeException("게시글 인덱스 조회 실패", e);
+        } finally {
+            close(rs);
+            close(pstmt);
+            TransactionManager.closeConnection(conn);
+        }
     }
 
-    public static void decreaseLikeCnt(String articleId) {
-        String sql = "UPDATE ARTICLE SET likeCnt = likeCnt - 1 WHERE articleId = ? AND likeCnt > 0";
+    public static void increaseLikeCnt(String articleId) {
+        String sql = "UPDATE ARTICLE SET likeCnt = likeCnt + 1 WHERE articleId = ?";
         executeUpdate(sql, articleId);
     }
 
