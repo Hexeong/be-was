@@ -93,8 +93,14 @@ public class DynamicPageHttpHandler implements DynamicHttpHandler {
 
     @LoginRequired
     @RequestMapping(method = RequestMethod.GET, path = {"/comment", "/comment/index.html"})
-    public ModelAndView comment(@SessionUser User user, Model model) {
+    public ModelAndView comment(HttpRequest req, @SessionUser User user, Model model) {
         model.put("username", user.getName());
+
+        Object articleId = req.line().getQueryParameterList().get("articleId");
+        if (articleId == null)
+            throw new CustomException(ErrorCode.BAD_REQUEST);
+        model.put("articleId", articleId.toString());
+
         return new ModelAndView(model, "/comment/index.html");
     }
 
