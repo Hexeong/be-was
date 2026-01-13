@@ -49,7 +49,7 @@
       <div class="post__menu">
         <ul class="post__menu__personal">
           <li>
-            <button class="post__menu__btn">
+            <button class="post__menu__btn" id="like-btn" data-article-id="{{article.articleId}}">
               <img src="./img/like.svg" />
               <p class="post__cnt">{{article.likeCnt}}</p>
             </button>
@@ -132,14 +132,47 @@
 
 <script>
   document.addEventListener("DOMContentLoaded", () => {
-    // 1. 화면에 있는 댓글 요소들 가져오기
-    const commentItems = document.querySelectorAll(".comment__item");
+    // =========================================================
+    // 1. [추가] 좋아요 버튼 로직 (Fetch + UI 업데이트)
+    // =========================================================
+    const likeBtn = document.getElementById("like-btn");
 
-    // 2. 조작할 버튼들 가져오기
+    if (likeBtn) {
+      likeBtn.addEventListener("click", () => {
+        const articleId = likeBtn.getAttribute("data-article-id");
+
+        if (articleId) {
+          // 서버로 좋아요 요청 전송
+          fetch(`/article/like?articleId=${articleId}`, {
+            method: 'GET'
+          })
+          .then(response => {
+            // 응답이 성공(200 OK 등)일 때만 처리
+            if (response.ok) {
+              const countElem = likeBtn.querySelector(".post__cnt");
+              if (countElem) {
+                // 현재 숫자를 가져와 +1 증가
+                let currentCount = parseInt(countElem.innerText, 10) || 0;
+                countElem.innerText = currentCount + 1;
+              }
+            } else {
+              console.error("좋아요 요청 실패: 서버 응답 오류");
+            }
+          })
+          .catch(err => {
+            console.error("네트워크 오류:", err);
+          });
+        }
+      });
+    }
+
+    // =========================================================
+    // 2. 기존 댓글 더보기/접기 로직
+    // =========================================================
+    const commentItems = document.querySelectorAll(".comment__item");
     const showAllBtn = document.getElementById("show-all-btn");
     const totalCommentCntDisplay = document.getElementById("total-comment-cnt");
 
-    // 3. 개수 세기
     const totalCount = commentItems.length;
     const LIMIT = 3;
 
