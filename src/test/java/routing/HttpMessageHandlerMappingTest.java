@@ -18,6 +18,7 @@ import webserver.ApplicationContext;
 import webserver.handler.ResourceResponseHandler;
 
 import java.io.ByteArrayOutputStream;
+import java.sql.SQLException;
 import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -29,7 +30,7 @@ class HttpMessageHandlerMappingTest {
     private ByteArrayOutputStream out;
 
     @BeforeEach
-    void setUp() {
+    void setUp() throws SQLException {
         // ApplicationContext 생성 시 컴포넌트 스캔 및 매핑 초기화가 진행됩니다.
         context = new ApplicationContext();
         out = new ByteArrayOutputStream();

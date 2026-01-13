@@ -15,6 +15,7 @@ import resolver.view.ModelAndView;
 import webserver.ApplicationContext;
 
 import java.io.ByteArrayOutputStream;
+import java.sql.SQLException;
 import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -26,7 +27,7 @@ class UserRequestTest {
     private ByteArrayOutputStream out;
 
     @BeforeEach
-    void setUp() {
+    void setUp() throws SQLException {
         context = new ApplicationContext();
         out = new ByteArrayOutputStream();
     }
