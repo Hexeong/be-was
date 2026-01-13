@@ -4,6 +4,7 @@ import annotation.LoginRequired;
 import db.SessionStorage;
 import exception.CustomException;
 import exception.ErrorCode;
+import model.http.HttpStatus;
 import util.extractor.CookieExtractor;
 import handler.HandlerMethod;
 import model.http.HttpRequest;
@@ -22,6 +23,7 @@ public class LoginInspectInterceptor implements Interceptor {
                 LoginRequired loginRequired = hm.getHandlerMethod().getAnnotation(LoginRequired.class);
                 if (!isLoginStatus(req)) {
                     String redirectPathOnFail = loginRequired.redirectPathOnFail();
+                    res.setStatus(HttpStatus.FOUND);
                     res.headers().put(HEADER_LOCATION, redirectPathOnFail);
                     throw new CustomException(ErrorCode.NOT_AUTHORIZED_ACCESS);
                 }
