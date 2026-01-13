@@ -1,6 +1,6 @@
-package parser.http.impl;
+package util.parser;
 
-import extractor.http.QueryParameterExtractor;
+import util.extractor.QueryParameterExtractor;
 import model.http.HttpStartLine;
 
 import java.io.ByteArrayOutputStream;

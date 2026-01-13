@@ -29,7 +29,7 @@ public class SimpleTemplateEngine { // By [AI]
             template.replace(startIndex, endIndex + 2, replacement);
 
             // 다음 검색 위치 조정
-            startIndex = template.indexOf("{{", startIndex + replacement.length());
+            startIndex = template.indexOf(VARIABLE_OPEN_IDENTIFIER, startIndex + replacement.length());
         }
         return template.toString();
     }

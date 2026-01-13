@@ -8,7 +8,7 @@ import model.http.HttpRequest;
 import model.http.HttpResponse;
 import model.http.sub.HttpVersion;
 import model.http.sub.RequestMethod;
-import model.user.User;
+import model.User;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import resolver.view.ModelAndView;
@@ -44,7 +44,7 @@ class UserRequestTest {
                         "Content-Type", "application/x-www-form-urlencoded",
                         "Accept", "*/*"),
                 "userId=javajigi&password=password&name=%EB%B0%95%EC%9E%AC%EC%84%B1&email=javajigi%40slipp.net");
-        HttpResponse res = new HttpResponse(out);
+        HttpResponse res = new HttpResponse(req, out);
 
         // when
         HandlerExecutionChain chain = context.getHandler(req);
@@ -103,7 +103,7 @@ class UserRequestTest {
                         "Content-Type", "application/x-www-form-urlencoded",
                         "Accept", "*/*"),
                 "userId=javajigi&password=password&name=%EB%B0%95%EC%9E%AC%EC%84%B1&email=javajigi%40slipp.net");
-        HttpResponse res = new HttpResponse(out);
+        HttpResponse res = new HttpResponse(req, out);
 
         // when
         HandlerExecutionChain chain = context.getHandler(req);

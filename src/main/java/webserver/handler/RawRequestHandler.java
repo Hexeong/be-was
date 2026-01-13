@@ -9,7 +9,7 @@ import model.http.HttpResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import model.http.HttpRequest;
-import parser.http.HttpParserFacade;
+import util.parser.HttpParserFacade;
 import webserver.ApplicationContext;
 
 public class RawRequestHandler implements Runnable {
@@ -31,19 +31,18 @@ public class RawRequestHandler implements Runnable {
             connection.setSoTimeout(5000);
 
             while(true) {
+                HttpResponse res = new HttpResponse(out);
                 try {
                     HttpRequest req = HttpParserFacade.parse(in);
-                    HttpResponse res = new HttpResponse(req, out);
+                    res.setVersion(req.line().getVersion());
 
                     log.debug(req.toString());
 
-                    try {
-                        context.doDispatch(req, res);
-                        res.sendResponse();
-                    } catch (CustomException e) {
-                        res.sendExceptionResponse(e);
-                    }
+                    context.doDispatch(req, res);
+                    res.sendResponse();
 
+                } catch (CustomException e) {
+                    ErrorResponseHandler.responseError(res, e);
                 } catch (SocketTimeoutException e) {
                     log.error(e.getMessage());
                     break;
