@@ -59,16 +59,23 @@
 
 .post__menu__personal {
   display: flex;
-  gap: 8px;
+  gap: 30px;
 }
 
 .post__menu__btn {
+  display: flex;
   width: 32px;
   height: 32px;
   padding: 0;
   margin: 0;
   border: 0;
   background: transparent;
+}
+
+.post__cnt {
+  display: flex;
+  align-items: center;
+  margin-left: 5px;
 }
 
 .comment {

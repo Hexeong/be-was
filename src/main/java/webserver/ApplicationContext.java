@@ -2,6 +2,7 @@ package webserver;
 
 import annotation.Router;
 import annotation.RequestMapping;
+import db.DatabaseInitializer;
 import exception.CustomException;
 import exception.ErrorCode;
 import handler.HandlerMethod;
@@ -10,8 +11,10 @@ import handler.HandlerExecutionChain;
 import interceptor.Interceptor;
 import model.http.HttpRequest;
 import model.http.HttpResponse;
+import org.h2.tools.Server;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import proxy.TransactionProxy;
 import resolver.argument.ArgumentResolver;
 import handler.HandlerMapping;
 import handler.RouteKey;
@@ -22,6 +25,7 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.net.URL;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
@@ -44,7 +48,7 @@ public class ApplicationContext {
     private static final String INTERCEPTOR_PACKAGE_PATH = "interceptor";
     private static final String ARGUMENT_RESOLVER_PACKAGE_PATH = "resolver.argument";
 
-    public ApplicationContext() {
+    public ApplicationContext() throws SQLException {
         this.dispatcher = new Dispatcher(this);
         this.mapping = new HandlerMapping(); // HandlerMapping 인스턴스 초기화
 
@@ -68,6 +72,8 @@ public class ApplicationContext {
 
         // 2. 스캔된 핸들러를 기반으로 매핑 정보 생성
         initMapping();
+        DatabaseInitializer.init();
+        Server.createWebServer("-web", "-webAllowOthers", "-webPort", "8082").start();
     }
 
     private void initMapping() {
@@ -171,13 +177,16 @@ public class ApplicationContext {
 
     public HandlerExecutionChain getHandler(HttpRequest req) {
         RouteKey routeKey = new RouteKey(req.line().getMethod(), req.line().getPathUrl());
-        Object handler = mapping.getHandler(routeKey); // HandlerMethod가 Object 타입으로 반환됨
+        HandlerMethod handler = mapping.getHandler(routeKey); // HandlerMethod가 Object 타입으로 반환됨
 
         if (handler == null) { // requestMethod, urlPath 둘다 맞지 않은 경우 정적 처리 핸들러로 이동
             return null;
         }
 
-        // TODO:: interceptorList 중 urlPath에 맞는 경우만 추가
+        if (TransactionProxy.support(handler)) {
+            handler = new TransactionProxy(handler);
+        }
+
         List<Interceptor> possibleInterceptorList = new ArrayList<>(this.interceptorList);
 
         return new HandlerExecutionChain(possibleInterceptorList, handler);

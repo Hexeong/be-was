@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link href="./reset.css" rel="stylesheet" />
+    <link href="./global.css" rel="stylesheet" />
+    <link href="./main.css" rel="stylesheet" />
+    <title>Error - {{statusCode}}</title>
+    <style>
+        /* 에러 페이지 전용 추가 스타일 (기존 css를 해치지 않는 선에서 정의) */
+        .error-content {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 60px 0;
+        }
+
+        .error-code {
+            font-weight: 700;
+            font-size: 80px; /* page-title보다 더 크게 강조 */
+            color: #14212b;
+            margin-bottom: 24px;
+        }
+
+        .error-message {
+            font-weight: 400;
+            font-size: 18px;
+            line-height: 1.6;
+            color: #4b5966;
+            margin-bottom: 40px;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <header class="header">
+        <a href="/"><img src="./img/signiture.svg" alt="logo"/></a>
+    </header>
+
+    <div class="wrapper">
+        <div class="error-content">
+            <h1 class="error-code">{{statusCode}}</h1>
+
+            <p class="error-message">
+                {{statusMessage}}
+            </p>
+
+            <a href="/" class="btn btn_contained btn_size_m" style="width: 200px;">
+                메인으로 돌아가기
+            </a>
+        </div>
+    </div>
+</div>
+</body>
+</html>

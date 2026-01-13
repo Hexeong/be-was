@@ -1,7 +1,6 @@
 package resolver.view;
 
 import model.Model;
-import model.http.HttpRequest;
 import model.http.HttpResponse;
 import model.http.HttpStatus;
 import webserver.handler.StaticResourceType;
@@ -31,7 +30,7 @@ public record ModelAndView(
         );
     }
 
-    public void resolve(HttpRequest req, HttpResponse res) throws IOException {
+    public void resolve(HttpResponse res) throws IOException {
         // 여기서는 byte[]를 만들어야 함. viewName을 보고 File을 읽어온 다음, Model에 있는 값에 대해 적용하는 방식
         if (viewName.startsWith(REDIRECT_IDENTIFIER)) {
             String redirectPath = viewName.substring(REDIRECT_IDENTIFIER.length());
@@ -59,9 +58,12 @@ public record ModelAndView(
 
         StringBuilder sb = new StringBuilder(new String(fileBytes, StandardCharsets.UTF_8));
 
-        // 템플릿 엔진 동작 (순서: 조건문 처리 -> 변수 치환)
-        SimpleTemplateEngine.renderConditionals(sb, model); // <if> 처리
-        String finalContent = SimpleTemplateEngine.renderVariables(sb, model); // {{}} 처리
+        // 반복문 처리 (<for> 태그)
+        SimpleTemplateEngine.renderLoops(sb, model);
+        // 조건문 처리 (<if> 태그)
+        SimpleTemplateEngine.renderConditionals(sb, model);
+        // 변수 치환 ({{ ... }})
+        String finalContent = SimpleTemplateEngine.renderVariables(sb, model);
 
         // 응답 전송
         byte[] finalBytes = finalContent.getBytes(StandardCharsets.UTF_8);

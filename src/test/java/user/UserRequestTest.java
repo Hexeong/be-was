@@ -8,13 +8,14 @@ import model.http.HttpRequest;
 import model.http.HttpResponse;
 import model.http.sub.HttpVersion;
 import model.http.sub.RequestMethod;
-import model.user.User;
+import model.User;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import resolver.view.ModelAndView;
 import webserver.ApplicationContext;
 
 import java.io.ByteArrayOutputStream;
+import java.sql.SQLException;
 import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -26,7 +27,7 @@ class UserRequestTest {
     private ByteArrayOutputStream out;
 
     @BeforeEach
-    void setUp() {
+    void setUp() throws SQLException {
         context = new ApplicationContext();
         out = new ByteArrayOutputStream();
     }

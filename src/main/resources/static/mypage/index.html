@@ -11,13 +11,14 @@
       <header class="header">
         <a href="/"><img src="../img/signiture.svg" /></a>
         <ul class="header__menu">
-        <li class="header__menu__item">
+          <li class="header__menu__item">
+            <a class="btn btn_ghost btn_size_s" href="/mypage">안녕하세요, {{username}}님!</a>
+          </li>
+          <li class="header__menu__item">
             <a class="btn btn_contained btn_size_s" href="/article">글쓰기</a>
           </li>
           <li class="header__menu__item">
-            <button id="logout-btn" class="btn btn_ghost btn_size_s">
-              로그아웃
-            </button>
+            <a class="btn btn_ghost btn_size_s" href="/user/logout">로그아웃</a>
           </li>
         </ul>
       </header>
@@ -39,13 +40,15 @@
                   </div>
               </div>
         </div>
-          <form class="form">
+          <form class="form" method="post" action="/mypage">
             <div class="textfield textfield_size_s input_margin">
               <p class="title_textfield">닉네임</p>
               <input
                 class="input_textfield"
                 placeholder="{회원 가입 시 입력했던 닉네임}"
                 autocomplete="username"
+                name="name"
+                value="{{username}}"
               />
             </div>
             <div class="textfield textfield_size_s">
@@ -54,6 +57,8 @@
                 class="input_textfield"
                 placeholder="비밀번호를 변경할 경우 입력해주세요"
                 autocomplete="current-password"
+                type="password"
+                name="password"
               />
             </div>
             <div class="textfield textfield_size_s">
@@ -61,6 +66,7 @@
               <input
                 class="input_textfield"
                 type="password"
+                name="confirmedPassword"
                 placeholder="한 번 더 입력해주세요"
                 autocomplete="current-password"
               />
@@ -69,7 +75,7 @@
               id="registration-btn"
               class="btn btn_contained btn_size_m input_margin"
             
-              type="button"
+              type="submit"
             >
               변경사항 저장
             </button>

@@ -3,7 +3,6 @@ package util.parser;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.regex.Pattern;
@@ -14,9 +13,16 @@ public class HttpHeaderParser {
     private static final String CR = "\r";
     private static final char LF = '\n';
     private static final Pattern ALLOWED_HEADER_PATTERN = Pattern.compile("^[\\x09\\x20-\\x7E]*$");
+    private static final String US_ASCII = "US-ASCII";
 
     private HttpHeaderParser() {}
 
+    /**
+     * 넘어온 InputStream에 대해 readHeaderLine을 거쳐 바이트 스트림을 객체로 파싱합니다.
+     * @param inputStream
+     * @return Map<String, String> 타입의 헤더 정보
+     * @throws IOException
+     */
     public static Map<String, String> parse(InputStream inputStream) throws IOException {
         String line;
         Map<String, String> headers = new HashMap<>();
@@ -38,10 +44,6 @@ public class HttpHeaderParser {
         return headers;
     }
 
-    /** [AI로 작성]
-     * InputStream에서 한 줄(CRLF 또는 LF)을 읽어 문자열로 반환합니다.
-     * 이 메서드는 BufferedReader의 버퍼링으로 인한 Body 데이터 침범 문제를 방지합니다.
-     */
     private static String readHeaderLine(InputStream inputStream) throws IOException {
         ByteArrayOutputStream buffer = new ByteArrayOutputStream();
         int b;
@@ -57,7 +59,7 @@ public class HttpHeaderParser {
             return null; // 스트림 종료
         }
 
-        String line = buffer.toString(StandardCharsets.US_ASCII);
+        String line = buffer.toString(US_ASCII);
 
         if (line.endsWith(CR)) {
             return line.substring(0, line.length() - 1);

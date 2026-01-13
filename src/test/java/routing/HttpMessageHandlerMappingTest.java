@@ -1,6 +1,7 @@
 package routing;
 
 import db.Database;
+import exception.CustomException;
 import fixture.HttpMessageTestFixture;
 import handler.HandlerExecutionChain;
 import handler.HandlerMethod;
@@ -9,7 +10,7 @@ import model.http.HttpRequest;
 import model.http.HttpResponse;
 import model.http.sub.HttpVersion;
 import model.http.sub.RequestMethod;
-import model.user.User;
+import model.User;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import resolver.view.ModelAndView;
@@ -17,11 +18,11 @@ import webserver.ApplicationContext;
 import webserver.handler.ResourceResponseHandler;
 
 import java.io.ByteArrayOutputStream;
+import java.sql.SQLException;
 import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertAll;
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.*;
 
 class HttpMessageHandlerMappingTest {
 
@@ -29,7 +30,7 @@ class HttpMessageHandlerMappingTest {
     private ByteArrayOutputStream out;
 
     @BeforeEach
-    void setUp() {
+    void setUp() throws SQLException {
         // ApplicationContext 생성 시 컴포넌트 스캔 및 매핑 초기화가 진행됩니다.
         context = new ApplicationContext();
         out = new ByteArrayOutputStream();
@@ -103,7 +104,7 @@ class HttpMessageHandlerMappingTest {
         // then
         // 1. 매핑된 동적 핸들러가 없음을 검증
         assertThat(chain).isNotNull();
-        assertDoesNotThrow(() -> mv.resolve(req, res));
+        assertDoesNotThrow(() -> mv.resolve(res));
 
         res.sendResponse();
 
@@ -131,10 +132,6 @@ class HttpMessageHandlerMappingTest {
 
         // then
         assertThat(chain).isNull();
-        assertDoesNotThrow(() -> ResourceResponseHandler.handle(req, res));
-        res.sendResponse();
-
-        assertThat(out.toString())
-                .contains("HTTP/1.1 404 Not Found");
+        assertThrows(CustomException.class, () -> ResourceResponseHandler.handle(req, res));
     }
 }

@@ -2,17 +2,19 @@ package handler.impl;
 
 import annotation.Router;
 import annotation.RequestMapping;
-import db.Database;
+import annotation.Transactional;
+import dao.UserDao;
 import db.SessionStorage;
 import util.extractor.CookieExtractor;
 import model.http.HttpRequest;
 import model.http.HttpResponse;
 import model.http.sub.RequestMethod;
-import model.user.User;
+import model.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import resolver.view.ModelAndView;
 
+import java.util.Optional;
 import java.util.concurrent.ThreadLocalRandom;
 
 @Router
@@ -26,12 +28,14 @@ public class UserHttpHandler implements DynamicHttpHandler {
 
     public UserHttpHandler() {}
 
+    @Transactional
     @RequestMapping(method = RequestMethod.POST, path = "/user/create")
     public ModelAndView createUser(HttpResponse res, User user) {
 
         // TODO:: 방어로직 필요
+        // TODO:: 각 필드에 대한 4글자 최소 길이 검사 로직 필요
 
-        Database.addUser(user);
+        UserDao.create(user);
 
         setSessionCookie(res, user);
 
@@ -42,10 +46,11 @@ public class UserHttpHandler implements DynamicHttpHandler {
     public ModelAndView login(HttpResponse res, User user) {
 
         // TODO:: 방어로직 필요
+        // TODO:: 로그인 실패시 사용자에게 리다이렉트 뿐만 아니라 안내해줘야 함.
 
-        User findUser = Database.findUserById(user.getUserId());
-        if (findUser != null && findUser.getPassword().equals(user.getPassword())) {
-            setSessionCookie(res, findUser);
+        Optional<User> findUser = UserDao.findById(user.getUserId());
+        if (findUser.isPresent() && findUser.get().getPassword().equals(user.getPassword())) {
+            setSessionCookie(res, findUser.get());
             return new ModelAndView(null, "redirect:/");
         }
         return new ModelAndView( "redirect:/login");
