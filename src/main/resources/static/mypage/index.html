@@ -12,6 +12,9 @@
         <a href="/"><img src="../img/signiture.svg" /></a>
         <ul class="header__menu">
           <li class="header__menu__item">
+            <a class="btn btn_ghost btn_size_s" href="/mypage">안녕하세요, {{username}}님!</a>
+          </li>
+          <li class="header__menu__item">
             <a class="btn btn_contained btn_size_s" href="/article">글쓰기</a>
           </li>
           <li class="header__menu__item">
@@ -44,7 +47,7 @@
                 class="input_textfield"
                 placeholder="{회원 가입 시 입력했던 닉네임}"
                 autocomplete="username"
-                name="username"
+                name="name"
                 value="{{username}}"
               />
             </div>
