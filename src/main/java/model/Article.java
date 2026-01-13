@@ -57,4 +57,28 @@ public class Article {
     public String getCreatedAt() {
         return createdAt;
     }
+
+    public void setLikeCnt(int likeCnt) {
+        this.likeCnt = likeCnt;
+    }
+
+    public void setWriterId(String writerId) {
+        this.writerId = writerId;
+    }
+
+    public void setWriterName(String writerName) {
+        this.writerName = writerName;
+    }
+
+    @Override
+    public String toString() {
+        return "Article{" +
+                "articleId='" + articleId + '\'' +
+                ", content='" + content + '\'' +
+                ", likeCnt=" + likeCnt +
+                ", writerId='" + writerId + '\'' +
+                ", writerName='" + writerName + '\'' +
+                ", createdAt='" + createdAt + '\'' +
+                '}';
+    }
 }

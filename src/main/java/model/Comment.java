@@ -57,4 +57,28 @@ public class Comment {
     public String getCreatedAt() {
         return createdAt;
     }
+
+    public void setWriterId(String writerId) {
+        this.writerId = writerId;
+    }
+
+    public void setWriterName(String writerName) {
+        this.writerName = writerName;
+    }
+
+    public void setArticleId(String articleId) {
+        this.articleId = articleId;
+    }
+
+    @Override
+    public String toString() {
+        return "Comment{" +
+                "commentId='" + commentId + '\'' +
+                ", content='" + content + '\'' +
+                ", writerId='" + writerId + '\'' +
+                ", writerName='" + writerName + '\'' +
+                ", articleId='" + articleId + '\'' +
+                ", createdAt='" + createdAt + '\'' +
+                '}';
+    }
 }
