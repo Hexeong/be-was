@@ -3,6 +3,7 @@ package webserver.handler;
 import exception.CustomException;
 import model.Model;
 import model.http.HttpResponse;
+import model.http.HttpStatus;
 import resolver.view.ModelAndView;
 
 import java.io.IOException;
@@ -15,10 +16,12 @@ public class ErrorResponseHandler {
      * @throws IOException
      */
     public static void responseError(HttpResponse res, CustomException e) throws IOException {
-        Model model = new Model(e);
-        ModelAndView mv = new ModelAndView(model, "/error.html");
+        if (res.getStatus().equals(HttpStatus.OK)) {
+            Model model = new Model(e);
+            ModelAndView mv = new ModelAndView(model, "/error.html");
+            mv.resolve(res);
+        }
 
-        mv.resolve(res);
         res.sendResponse();
     }
 }
