@@ -10,10 +10,9 @@ CREATE TABLE IF NOT EXISTS ARTICLE (
                                        articleId VARCHAR(254) PRIMARY KEY,
     content VARCHAR(1023) NOT NULL,
     likeCnt INTEGER NOT NULL,
-    commentCnt INTEGER NOT NULL,
     writerId VARCHAR(50) NOT NULL,
     writerName VARCHAR(50) NOT NULL,
-    createdAt VARCHAR(50) NOT NULL -- 추가된 컬럼
+    createdAt VARCHAR(50) NOT NULL
     );
 
 CREATE TABLE IF NOT EXISTS COMMENT (
@@ -22,11 +21,11 @@ CREATE TABLE IF NOT EXISTS COMMENT (
     writerId VARCHAR(50) NOT NULL,
     writerName VARCHAR(50) NOT NULL,
     articleId VARCHAR(254) NOT NULL,
-    createdAt VARCHAR(50) NOT NULL -- 추가된 컬럼
+    createdAt VARCHAR(50) NOT NULL
     );
 
 
--- 2. 테스트 데이터 초기화 (스키마 변경 반영)
+-- 2. 테스트 데이터 초기화
 
 -- USERS
 INSERT INTO USERS (userId, password, name, email) VALUES
@@ -36,15 +35,15 @@ INSERT INTO USERS (userId, password, name, email) VALUES
                                                       ('user4', '1234', 'David', 'david@example.com'),
                                                       ('user5', '1234', 'Eve', 'eve@example.com');
 
--- ARTICLE (createdAt 추가: 시간 순서대로 정렬 확인용)
-INSERT INTO ARTICLE (articleId, content, likeCnt, commentCnt, writerId, writerName, createdAt) VALUES
-                                                                                                   ('article1', '안녕하세요, 첫 번째 게시글입니다.', 0, 1, 'user1', 'Alice', '2024-03-01 10:00:00'),
-                                                                                                   ('article2', '두 번째 게시글 내용입니다.', 3, 2, 'user2', 'Bob', '2024-03-01 11:00:00'),
-                                                                                                   ('article3', '세 번째 글입니다.', 5, 3, 'user3', 'Charlie', '2024-03-01 12:00:00'),
-                                                                                                   ('article4', '네 번째 게시글입니다.', 12, 4, 'user4', 'David', '2024-03-01 13:00:00'),
-                                                                                                   ('article5', '마지막 다섯 번째 게시글입니다.', 25, 5, 'user5', 'Eve', '2024-03-01 14:00:00');
+-- ARTICLE (commentCnt 값 및 컬럼 제거)
+INSERT INTO ARTICLE (articleId, content, likeCnt, writerId, writerName, createdAt) VALUES
+                                                                                       ('article1', '안녕하세요, 첫 번째 게시글입니다.', 0, 'user1', 'Alice', '2024-03-01 10:00:00'),
+                                                                                       ('article2', '두 번째 게시글 내용입니다.', 3, 'user2', 'Bob', '2024-03-01 11:00:00'),
+                                                                                       ('article3', '세 번째 글입니다.', 5, 'user3', 'Charlie', '2024-03-01 12:00:00'),
+                                                                                       ('article4', '네 번째 게시글입니다.', 12, 'user4', 'David', '2024-03-01 13:00:00'),
+                                                                                       ('article5', '마지막 다섯 번째 게시글입니다.', 25, 'user5', 'Eve', '2024-03-01 14:00:00');
 
--- COMMENT (createdAt 추가)
+-- COMMENT
 -- article1 댓글
 INSERT INTO COMMENT (commentId, content, writerId, writerName, articleId, createdAt) VALUES
     ('comment1', 'Alice님 환영합니다!', 'user2', 'Bob', 'article1', '2024-03-01 10:05:00');
