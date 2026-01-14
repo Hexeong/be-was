@@ -6,20 +6,6 @@
   <link href="../reset.css" rel="stylesheet" />
   <link href="../global.css" rel="stylesheet" />
   <link href="../main.css" rel="stylesheet" />
-  <style>
-    .hidden {
-      display: none !important;
-    }
-    .nav__menu__item__btn.disabled {
-      color: #b0b0b0;          /* 텍스트 회색 */
-      pointer-events: none;    /* 클릭 이벤트 차단 */
-      cursor: default;         /* 커서 기본 모양 */
-    }
-    .nav__menu__item__btn.disabled img {
-      opacity: 0.3;
-      filter: grayscale(100%);
-    }
-  </style>
 </head>
 <body>
 <div class="container">
@@ -27,7 +13,7 @@
     <a href="/"><img src="../img/signiture.svg" /></a>
     <ul class="header__menu">
       <li class="header__menu__item">
-        <a class="btn btn_ghost btn_size_s" href="/mypage">안녕하세요, {{username}}님!</a>
+        <a class="btn btn_ghost btn_size_s" href="/mypage">안녕하세요, {{user.name}}님!</a>
       </li>
       <li class="header__menu__item">
         <a class="btn btn_contained btn_size_s" href="/article">글쓰기</a>
@@ -43,7 +29,9 @@
     <if condition="hasArticle">
       <div class="post">
         <div class="post__account">
-          <img class="post__account__img" />
+          <div class="profile-circle">
+            <img class="post__account__img" src="{{article.writerProfileUrl}}" />
+          </div>
           <p class="post__account__nickname">{{article.writerName}}</p>
         </div>
         <img class="post__img" src="{{article.imageUrl}}"/>
@@ -75,7 +63,9 @@
         <for cur="comment" range="comments">
           <li class="comment__item">
             <div class="comment__item__user">
-              <img class="comment__item__user__img" />
+              <div class="profile-circle">
+                <img class="comment__item__user__img" src="{{comment.writerProfileUrl}}"/>
+              </div>
               <p class="comment__item__user__nickname">{{comment.writerName}}</p>
             </div>
             <p class="comment__item__article">
@@ -134,6 +124,18 @@
 
 <script>
   document.addEventListener("DOMContentLoaded", () => {
+    const images = document.querySelectorAll('.post__account__img, .comment__item__user__img');
+
+    images.forEach((img) => {
+      if (!img.getAttribute('src') || img.getAttribute('src').trim() === "") {
+        img.classList.add('hidden');
+      }
+
+      img.addEventListener('error', () => {
+        img.classList.add('hidden');
+      });
+    });
+
     // =========================================================
     // 1. [추가] 좋아요 버튼 로직 (Fetch + UI 업데이트)
     // =========================================================
@@ -144,16 +146,13 @@
         const articleId = likeBtn.getAttribute("data-article-id");
 
         if (articleId) {
-          // 서버로 좋아요 요청 전송
           fetch(`/article/like?articleId=${articleId}`, {
             method: 'GET'
           })
           .then(response => {
-            // 응답이 성공(200 OK 등)일 때만 처리
             if (response.ok) {
               const countElem = likeBtn.querySelector(".post__cnt");
               if (countElem) {
-                // 현재 숫자를 가져와 +1 증가
                 let currentCount = parseInt(countElem.innerText, 10) || 0;
                 countElem.innerText = currentCount + 1;
               }
@@ -178,7 +177,6 @@
     const totalCount = commentItems.length;
     const LIMIT = 3;
 
-    // 상단 아이콘 옆 숫자 업데이트
     if (totalCommentCntDisplay) {
       totalCommentCntDisplay.innerText = totalCount;
     }

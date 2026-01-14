@@ -6,20 +6,6 @@
   <link href="./reset.css" rel="stylesheet" />
   <link href="./global.css" rel="stylesheet" />
   <link href="./main.css" rel="stylesheet" />
-  <style>
-    .hidden {
-      display: none !important;
-    }
-    .nav__menu__item__btn.disabled {
-      color: #b0b0b0;
-      pointer-events: none;
-      cursor: default;
-    }
-    .nav__menu__item__btn.disabled img {
-      opacity: 0.3;
-      filter: grayscale(100%);
-    }
-  </style>
 </head>
 <body>
 <div class="container">
@@ -40,7 +26,9 @@
     <if condition="hasArticle">
       <div class="post">
         <div class="post__account">
-          <img class="post__account__img" />
+          <div class="profile-circle">
+            <img class="post__account__img" src="{{article.writerProfileUrl}}" />
+          </div>
           <p class="post__account__nickname">{{article.writerName}}</p>
         </div>
         <img class="post__img" src="{{article.imageUrl}}"/>
@@ -72,7 +60,9 @@
         <for cur="comment" range="comments">
           <li class="comment__item">
             <div class="comment__item__user">
-              <img class="comment__item__user__img" />
+              <div class="profile-circle">
+                <img class="comment__item__user__img" src="{{comment.writerProfileUrl}}"/>
+              </div>
               <p class="comment__item__user__nickname">{{comment.writerName}}</p>
             </div>
             <p class="comment__item__article">
@@ -129,6 +119,18 @@
 
 <script>
   document.addEventListener("DOMContentLoaded", () => {
+    const images = document.querySelectorAll('.post__account__img, .comment__item__user__img');
+
+    images.forEach((img) => {
+      if (!img.getAttribute('src') || img.getAttribute('src').trim() === "") {
+        img.classList.add('hidden');
+      }
+
+      img.addEventListener('error', () => {
+        img.classList.add('hidden');
+      });
+    });
+
     // ---------------------------------------------------------
     // 1. [수정] 좋아요 버튼 이벤트 핸들러 (응답 확인 후 숫자 증가)
     // ---------------------------------------------------------
@@ -143,15 +145,12 @@
             method: 'GET'
           })
           .then(response => {
-            // 서버 응답 코드 확인 (200 OK 등 성공일 때)
             if (response.ok) {
-              return response.text(); // 본문 내용("ok" 등)을 반환
+              return response.text();
             }
             throw new Error("Network response was not ok");
           })
           .then(data => {
-            // 필요하다면 여기서 if (data === "ok") 체크를 추가할 수 있습니다.
-            // 성공적으로 응답이 왔으므로 숫자를 1 증가시킵니다.
             const countElem = likeBtn.querySelector(".post__cnt");
             if (countElem) {
               // 현재 숫자를 가져와서 정수로 변환 (실패 시 0)
@@ -161,7 +160,6 @@
           })
           .catch(err => {
             console.error("좋아요 요청 실패:", err);
-            // 에러 시 사용자에게 알림을 띄우거나 UI를 원복하는 처리를 추가할 수 있습니다.
           });
         }
       });

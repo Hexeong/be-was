@@ -1,87 +1,174 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link href="../reset.css" rel="stylesheet" />
-    <link href="../global.css" rel="stylesheet" />
-  </head>
-  <body>
-    <div class="container">
-      <header class="header">
-        <a href="/"><img src="../img/signiture.svg" /></a>
-        <ul class="header__menu">
-          <li class="header__menu__item">
-            <a class="btn btn_ghost btn_size_s" href="/mypage">안녕하세요, {{username}}님!</a>
-          </li>
-          <li class="header__menu__item">
-            <a class="btn btn_contained btn_size_s" href="/article">글쓰기</a>
-          </li>
-          <li class="header__menu__item">
-            <a class="btn btn_ghost btn_size_s" href="/user/logout">로그아웃</a>
-          </li>
-        </ul>
-      </header>
-      <div class="page">
-        <h2 class="page-title">마이페이지</h2>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link href="../reset.css" rel="stylesheet" />
+  <link href="../global.css" rel="stylesheet" />
+  <style>
+    /* 파일 인풋 숨김 처리 */
+    #hidden-file-input { display: none; }
 
-        <div class="profile_container">
-          <div class="profile_box">
-              <div class="profile_image">
-                <img class="profile" />
-              </div>
-              <div class="profile_frame">
-                  <div class="btn_profile">
-                        <div class="btn_container">수정</div>
-                  </div>
-                  <div class="btn_bar"></div>
-                  <div class="btn_profile">
-                      <div class="btn_container">삭제</div>
-                  </div>
-              </div>
+    /* 비활성화된 버튼 스타일 */
+    button:disabled {
+      background-color: #ccc !important;
+      cursor: not-allowed;
+      pointer-events: none;
+    }
+  </style>
+</head>
+<body>
+<div class="container">
+  <header class="header">
+    <a href="/"><img src="../img/signiture.svg" /></a>
+    <ul class="header__menu">
+      <li class="header__menu__item">
+        <a class="btn btn_ghost btn_size_s" href="/mypage">안녕하세요, {{user.name}}님!</a>
+      </li>
+      <li class="header__menu__item">
+        <a class="btn btn_contained btn_size_s" href="/article">글쓰기</a>
+      </li>
+      <li class="header__menu__item">
+        <a class="btn btn_ghost btn_size_s" href="/user/logout">로그아웃</a>
+      </li>
+    </ul>
+  </header>
+  <div class="page">
+    <h2 class="page-title">마이페이지</h2>
+
+    <div class="profile_container">
+      <div class="profile_box">
+        <div class="profile_image">
+          <img id="profile-img-preview" class="profile" src="{{user.profileImageUrl}}"/>
         </div>
-          <form class="form" method="post" action="/mypage">
-            <div class="textfield textfield_size_s input_margin">
-              <p class="title_textfield">닉네임</p>
-              <input
-                class="input_textfield"
-                placeholder="{회원 가입 시 입력했던 닉네임}"
-                autocomplete="username"
-                name="name"
-                value="{{username}}"
-              />
-            </div>
-            <div class="textfield textfield_size_s">
-              <p class="title_textfield">비밀번호</p>
-              <input
-                class="input_textfield"
-                placeholder="비밀번호를 변경할 경우 입력해주세요"
-                autocomplete="current-password"
-                type="password"
-                name="password"
-              />
-            </div>
-            <div class="textfield textfield_size_s">
-              <p class="title_textfield">비밀번호 확인</p>
-              <input
-                class="input_textfield"
-                type="password"
-                name="confirmedPassword"
-                placeholder="한 번 더 입력해주세요"
-                autocomplete="current-password"
-              />
-            </div>
-            <button
-              id="registration-btn"
-              class="btn btn_contained btn_size_m input_margin"
-            
-              type="submit"
-            >
-              변경사항 저장
-            </button>
 
-        </form>
+        <div class="profile_frame">
+          <div id="btn-edit-profile" class="btn_profile" style="cursor: pointer;">
+            <div class="btn_container">수정</div>
+          </div>
+          <div class="btn_bar"></div>
+          <div id="btn-delete-profile" class="btn_profile" style="cursor: pointer;">
+            <div class="btn_container">삭제</div>
+          </div>
+        </div>
       </div>
+
+      <form class="form" method="post" action="/user/info" enctype="multipart/form-data">
+
+        <input type="file" id="hidden-file-input" name="file" accept="image/*" />
+        <input type="hidden" id="delete-flag" name="deleteProfileImage" value="false" />
+
+        <div class="textfield textfield_size_s input_margin">
+          <p class="title_textfield">닉네임</p>
+          <input
+                  id="input-name"
+                  class="input_textfield"
+                  placeholder="{회원 가입 시 입력했던 닉네임}"
+                  autocomplete="username"
+                  name="name"
+                  value="{{user.name}}"
+          />
+        </div>
+        <div class="textfield textfield_size_s">
+          <p class="title_textfield">비밀번호</p>
+          <input
+                  id="input-password"
+                  class="input_textfield"
+                  placeholder="비밀번호를 변경할 경우 입력해주세요"
+                  autocomplete="current-password"
+                  type="password"
+                  name="password"
+          />
+        </div>
+        <div class="textfield textfield_size_s">
+          <p class="title_textfield">비밀번호 확인</p>
+          <input
+                  id="input-password-confirm"
+                  class="input_textfield"
+                  type="password"
+                  name="confirmedPassword"
+                  placeholder="한 번 더 입력해주세요"
+                  autocomplete="current-password"
+          />
+        </div>
+
+        <button
+                id="registration-btn"
+                class="btn btn_contained btn_size_m input_margin"
+                type="submit"
+                disabled
+        >
+          변경사항 저장
+        </button>
+      </form>
     </div>
-  </body>
+  </div>
+</div>
+<script>
+  document.addEventListener("DOMContentLoaded", () => {
+    const editBtn = document.getElementById('btn-edit-profile');
+    const deleteBtn = document.getElementById('btn-delete-profile');
+    const fileInput = document.getElementById('hidden-file-input');
+    const deleteFlag = document.getElementById('delete-flag');
+    const profilePreview = document.getElementById('profile-img-preview');
+
+    const nameInput = document.getElementById('input-name');
+    const passwordInput = document.getElementById('input-password');
+    const passwordConfirmInput = document.getElementById('input-password-confirm');
+    const submitBtn = document.getElementById('registration-btn');
+
+    const initialName = nameInput.value;
+
+    const checkChanges = () => {
+      const isNameChanged = nameInput.value !== initialName;
+      const isPasswordEntered = passwordInput.value.length > 0 || passwordConfirmInput.value.length > 0;
+      const isFileSelected = fileInput.files.length > 0;
+      const isDeleteRequested = deleteFlag.value === "true";
+
+      if (isNameChanged || isPasswordEntered || isFileSelected || isDeleteRequested) {
+        submitBtn.disabled = false;
+      } else {
+        submitBtn.disabled = true;
+      }
+    };
+
+    // [이벤트 1] 수정 버튼 클릭
+    editBtn.addEventListener('click', () => {
+      fileInput.click();
+    });
+
+    // [이벤트 2] 파일 선택 시
+    fileInput.addEventListener('change', (e) => {
+      const file = e.target.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          profilePreview.src = e.target.result;
+        };
+        reader.readAsDataURL(file);
+        deleteFlag.value = "false";
+      }
+      checkChanges();
+    });
+
+    // [이벤트 3] 삭제 버튼 클릭
+    deleteBtn.addEventListener('click', () => {
+      fileInput.value = '';
+      profilePreview.src = '../img/default_profile.png';
+      deleteFlag.value = "true";
+      checkChanges();
+    });
+
+    nameInput.addEventListener('input', checkChanges);
+    passwordInput.addEventListener('input', checkChanges);
+    passwordConfirmInput.addEventListener('input', checkChanges);
+
+    const alertMsg = "{{alertMessage}}";
+    if (alertMsg && alertMsg.trim() !== "") {
+      alert(alertMsg);
+      document.cookie = "alertMessage=; path=/; expires=Thu, 01 Jan 1970 00:00:01 GMT;";
+    }
+  });
+</script>
+</body>
 </html>

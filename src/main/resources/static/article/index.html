@@ -12,7 +12,7 @@
         <a href="/"><img src="../img/signiture.svg" /></a>
         <ul class="header__menu">
           <li class="header__menu__item">
-            <a class="btn btn_ghost btn_size_s" href="/mypage">안녕하세요, {{username}}님!</a>
+            <a class="btn btn_ghost btn_size_s" href="/mypage">안녕하세요, {{user.name}}님!</a>
           </li>
           <li class="header__menu__item">
             <a class="btn btn_contained btn_size_s" href="/article">글쓰기</a>
@@ -56,15 +56,9 @@
   </body>
   <script>
     document.addEventListener("DOMContentLoaded", () => {
-      // =========================================================
-      // 서버 메시지 처리 (로그인 실패 시나리오 대응)
-      // =========================================================
-
-      // 1. 단순 알림 (예: 비밀번호 불일치)
       const alertMsg = "{{alertMessage}}";
       if (alertMsg && alertMsg.trim() !== "") {
         alert(alertMsg);
-        // 알림 확인 후 쿠키 삭제 (새로고침 시 재실행 방지)
         document.cookie = "alertMessage=; path=/; expires=Thu, 01 Jan 1970 00:00:01 GMT;";
       }}
     )
