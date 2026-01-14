@@ -40,7 +40,7 @@ public class ArticleHttpHandler implements DynamicHttpHandler {
             return new ModelAndView(model, "redirect:/article");
         }
 
-        articleReq.getFile().saveFileAs(article.getArticleId());
+        articleReq.getFile().saveFileAs(article.getArticleId(), "uploads/");
         String extension = articleReq.getFile().getExtension();
         String imageUrl = "/uploads/" + article.getArticleId() + extension;
         article.setImageUrl(imageUrl);

@@ -6,7 +6,7 @@ import java.io.IOException;
 
 public class MultipartFile {
 
-    private static final String UPLOAD_DIR = "src/main/resources/static/uploads/";
+    private static final String UPLOAD_DIR = "src/main/resources/static/";
 
     private final String originalFilename;
     private final String contentType;
@@ -36,9 +36,9 @@ public class MultipartFile {
         }
         return ""; // 확장자가 없는 경우
     }
-    public void saveFileAs(String name) {
+    public void saveFileAs(String name, String path) {
         String extension = getExtension();
-        File destFile = new File(UPLOAD_DIR, name + extension);
+        File destFile = new File(UPLOAD_DIR + path, name + extension);
         saveToFile(destFile);
     }
 

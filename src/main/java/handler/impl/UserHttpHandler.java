@@ -1,14 +1,12 @@
 package handler.impl;
 
-import annotation.Formdata;
-import annotation.Router;
-import annotation.RequestMapping;
-import annotation.Transactional;
+import annotation.*;
 import dao.UserDao;
 import db.SessionStorage;
 import exception.CustomException;
 import exception.ErrorCode;
 import model.Model;
+import model.request.UserUpdateRequest;
 import util.extractor.CookieExtractor;
 import model.http.HttpRequest;
 import model.http.HttpResponse;
@@ -90,6 +88,50 @@ public class UserHttpHandler implements DynamicHttpHandler {
         return new ModelAndView( "redirect:/");
     }
 
+    @LoginRequired
+    @RequestMapping(method = RequestMethod.POST, path = "/user/info")
+    public ModelAndView updateUserInfo(HttpResponse res, @SessionUser User user,
+                                       @MultipartFormdata UserUpdateRequest userUpdateReq) {
+
+        // 1. 유효성 검사
+        if (!userUpdateReq.getPassword().equals(userUpdateReq.getConfirmedPassword())) {
+            throw new CustomException(ErrorCode.MISMATCHED_PASSWORD);
+        }
+
+        if (!userUpdateReq.getName().isEmpty()) {
+            if (userUpdateReq.getName().length() < 4) {
+                throw new CustomException(ErrorCode.REGISTRATION_FIELD_ERROR);
+            }
+            user.setName(userUpdateReq.getName());
+        }
+
+        if (!userUpdateReq.getPassword().isEmpty()) {
+            if (userUpdateReq.getPassword().length() < 4) {
+                throw new CustomException(ErrorCode.REGISTRATION_FIELD_ERROR);
+            }
+            user.setPassword(userUpdateReq.getPassword());
+        }
+
+        if ("true".equals(userUpdateReq.getDeleteProfileImage())) {
+            user.setProfileImageUrl("");
+        }
+
+        if (userUpdateReq.getFile() != null) {
+            userUpdateReq.getFile().saveFileAs(user.getUserId(), "profile/");
+
+            String extension = userUpdateReq.getFile().getExtension();
+            String imageUrl = "/profile/" + user.getUserId() + extension;
+            user.setProfileImageUrl(imageUrl);
+        }
+
+        UserDao.editInfo(user);
+
+        String encodedMsg = URLEncoder.encode("회원 정보가 정상적으로 업데이트되었습니다.", StandardCharsets.UTF_8);
+        res.addHeader(COOKIE_HEADER_KEY, "alertMessage=" + encodedMsg + "; Path=/");
+
+        return new ModelAndView("redirect:/mypage");
+    }
+
     private void setSessionCookie(HttpResponse res, User user) {
         int randomSid = ThreadLocalRandom.current().nextInt(100000, 1000000);
         SessionStorage.addSession(String.valueOf(randomSid), user);
@@ -97,8 +139,6 @@ public class UserHttpHandler implements DynamicHttpHandler {
     }
 
     private void expireSessionCookie(HttpResponse res) {
-        // sid 값을 비우고, Max-Age=0으로 설정하여 브라우저가 즉시 삭제하게 함
-        // Set-Cookie 값을 응답으로 보낼 시 다른 쿠키는 영향 받지 않기에 괜찮음
         res.addHeader(COOKIE_HEADER_KEY, "sid=; Path=/; Max-Age=0");
     }
 }
