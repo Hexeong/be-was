@@ -10,6 +10,7 @@ import resolver.argument.ArgumentResolver;
 import resolver.view.ModelAndView;
 import webserver.ApplicationContext;
 
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
 
@@ -33,7 +34,7 @@ public class HttpRequestHandlerAdapter implements HandlerAdapter {
     }
 
     @Override
-    public ModelAndView handle(HttpRequest req, HttpResponse res, Object handler) {
+    public ModelAndView handle(HttpRequest req, HttpResponse res, Object handler) throws Exception {
         HandlerMethod hm = (HandlerMethod) handler;
         Object instance = hm.getHandlerInstance();
         Method method = hm.getHandlerMethod();
@@ -59,11 +60,18 @@ public class HttpRequestHandlerAdapter implements HandlerAdapter {
             }
         }
 
+        // 3. 리플렉션으로 메서드 실행 (인자값 주입)
         try {
-            // 3. 리플렉션으로 메서드 실행 (인자값 주입)
             return (ModelAndView) hm.invoke(args);
-        } catch (Exception e) {
-            throw new RuntimeException("Handler execution failed", e);
+        } catch (InvocationTargetException e) {
+            // 리플렉션 내부에서 발생한 실제 예외를 꺼냅니다.
+            Throwable targetException = e.getTargetException();
+
+            if (targetException instanceof Exception) {
+                throw (Exception) targetException;
+            } else {
+                throw e;
+            }
         }
     }
 

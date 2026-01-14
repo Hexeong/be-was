@@ -40,7 +40,12 @@ public class CommentDao {
     }
 
     public static List<Comment> findAllByArticleId(String articleId) {
-        String sql = "SELECT * FROM COMMENT WHERE articleId = ? ORDER BY createdAt ASC";
+        String sql = "SELECT c.*, u.profileImageUrl " +
+                "FROM COMMENT c " +
+                "LEFT JOIN USERS u ON c.writerId = u.userId " +
+                "WHERE c.articleId = ? " +
+                "ORDER BY c.createdAt ASC";
+
         List<Comment> comments = new ArrayList<>();
 
         Connection conn = null;
@@ -55,11 +60,13 @@ public class CommentDao {
             rs = pstmt.executeQuery();
 
             while (rs.next()) {
+                // [수정] Comment 생성자에 profileImageUrl 추가 (u.profileImageUrl)
                 comments.add(new Comment(
                         rs.getString("commentId"),
                         rs.getString("content"),
                         rs.getString("writerId"),
                         rs.getString("writerName"),
+                        rs.getString("profileImageUrl"), // JOIN으로 가져온 컬럼
                         rs.getString("articleId"),
                         rs.getString("createdAt")
                 ));

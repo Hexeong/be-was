@@ -14,7 +14,7 @@ import java.util.Optional;
 public class ArticleDao {
 
     public static void create(Article article) {
-        String sql = "INSERT INTO ARTICLE (articleId, content, likeCnt, writerId, writerName, createdAt) VALUES (?, ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO ARTICLE (articleId, content, imageUrl, likeCnt, writerId, writerName, createdAt) VALUES (?, ?, ?, ?, ?, ?, ?)";
 
         Connection conn = null;
         PreparedStatement pstmt = null;
@@ -25,10 +25,11 @@ public class ArticleDao {
 
             pstmt.setString(1, article.getArticleId());
             pstmt.setString(2, article.getContent());
-            pstmt.setInt(3, article.getLikeCnt());
-            pstmt.setString(4, article.getWriterId());
-            pstmt.setString(5, article.getWriterName());
-            pstmt.setString(6, article.getCreatedAt());
+            pstmt.setString(3, article.getImageUrl());
+            pstmt.setInt(4, article.getLikeCnt());
+            pstmt.setString(5, article.getWriterId());
+            pstmt.setString(6, article.getWriterName());
+            pstmt.setString(7, article.getCreatedAt());
 
             pstmt.executeUpdate();
 
@@ -41,7 +42,11 @@ public class ArticleDao {
     }
 
     public static List<Article> findAll() {
-        String sql = "SELECT * FROM ARTICLE ORDER BY createdAt DESC";
+        String sql = "SELECT a.*, u.profileImageUrl " +
+                "FROM ARTICLE a " +
+                "LEFT JOIN USERS u ON a.writerId = u.userId " +
+                "ORDER BY a.createdAt DESC";
+
         List<Article> articles = new ArrayList<>();
 
         Connection conn = null;
@@ -68,7 +73,10 @@ public class ArticleDao {
     }
 
     public static Optional<Article> findByIndex(int index) {
-        String sql = "SELECT * FROM ARTICLE ORDER BY createdAt DESC LIMIT 1 OFFSET ?";
+        String sql = "SELECT a.*, u.profileImageUrl " +
+                "FROM ARTICLE a " +
+                "LEFT JOIN USERS u ON a.writerId = u.userId " +
+                "ORDER BY a.createdAt DESC LIMIT 1 OFFSET ?";
 
         Connection conn = null;
         PreparedStatement pstmt = null;
@@ -120,13 +128,39 @@ public class ArticleDao {
         }
     }
 
-    public static void increaseLikeCnt(String articleId) {
-        String sql = "UPDATE ARTICLE SET likeCnt = likeCnt + 1 WHERE articleId = ?";
-        executeUpdate(sql, articleId);
+    public static int findIndexByArticleId(String articleId) {
+        String sql = "SELECT rnum FROM (" +
+                "    SELECT articleId, ROW_NUMBER() OVER (ORDER BY createdAt DESC) as rnum " +
+                "    FROM ARTICLE" +
+                ") t WHERE articleId = ?";
+
+        Connection conn = null;
+        PreparedStatement pstmt = null;
+        ResultSet rs = null;
+
+        try {
+            conn = TransactionManager.getConnection();
+            pstmt = conn.prepareStatement(sql);
+            pstmt.setString(1, articleId);
+            rs = pstmt.executeQuery();
+
+            if (rs.next()) {
+                return rs.getInt(1) - 1;
+            }
+
+            return -1;
+
+        } catch (SQLException e) {
+            throw new RuntimeException("게시글 인덱스 조회 실패", e);
+        } finally {
+            close(rs);
+            close(pstmt);
+            TransactionManager.closeConnection(conn);
+        }
     }
 
-    public static void decreaseLikeCnt(String articleId) {
-        String sql = "UPDATE ARTICLE SET likeCnt = likeCnt - 1 WHERE articleId = ? AND likeCnt > 0";
+    public static void increaseLikeCnt(String articleId) {
+        String sql = "UPDATE ARTICLE SET likeCnt = likeCnt + 1 WHERE articleId = ?";
         executeUpdate(sql, articleId);
     }
 
@@ -149,12 +183,15 @@ public class ArticleDao {
     }
 
     private static Article mapResultSetToArticle(ResultSet rs) throws SQLException {
+        // [수정] Article 생성자 변경 반영 (profileImageUrl 추가)
         return new Article(
                 rs.getString("articleId"),
                 rs.getString("content"),
+                rs.getString("imageUrl"),
                 rs.getInt("likeCnt"),
                 rs.getString("writerId"),
                 rs.getString("writerName"),
+                rs.getString("profileImageUrl"), // JOIN으로 가져온 컬럼 (u.profileImageUrl)
                 rs.getString("createdAt")
         );
     }

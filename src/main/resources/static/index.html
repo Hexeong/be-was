@@ -6,20 +6,6 @@
   <link href="./reset.css" rel="stylesheet" />
   <link href="./global.css" rel="stylesheet" />
   <link href="./main.css" rel="stylesheet" />
-  <style>
-    .hidden {
-      display: none !important;
-    }
-    .nav__menu__item__btn.disabled {
-      color: #b0b0b0;          /* 텍스트 회색 */
-      pointer-events: none;    /* 클릭 이벤트 차단 */
-      cursor: default;         /* 커서 기본 모양 */
-    }
-    .nav__menu__item__btn.disabled img {
-      opacity: 0.3;
-      filter: grayscale(100%);
-    }
-  </style>
 </head>
 <body>
 <div class="container">
@@ -37,57 +23,62 @@
     </ul>
   </header>
   <div class="wrapper">
-    <div class="post">
-      <div class="post__account">
-        <img class="post__account__img" />
-        <p class="post__account__nickname">{{article.writerName}}</p>
-      </div>
-      <img class="post__img" />
-      <div class="post__menu">
-        <ul class="post__menu__personal">
-          <li>
-            <button class="post__menu__btn">
-              <img src="./img/like.svg" />
-              <p class="post__cnt">{{article.likeCnt}}</p>
-            </button>
-          </li>
-          <li>
-            <button class="post__menu__btn">
-              <img src="./img/comment.svg" />
-              <p class="post__cnt" id="total-comment-cnt">0</p>
-            </button>
-          </li>
-        </ul>
-        <button class="post__menu__btn">
-          <img src="./img/bookMark.svg" />
-        </button>
-      </div>
-      <p class="post__article">
-        {{article.content}}
-      </p>
-    </div>
-
-    <ul class="comment" id="comment-list">
-      <for cur="comment" range="comments">
-        <li class="comment__item">
-          <div class="comment__item__user">
-            <img class="comment__item__user__img" />
-            <p class="comment__item__user__nickname">{{comment.writerName}}</p>
+    <if condition="hasArticle">
+      <div class="post">
+        <div class="post__account">
+          <div class="profile-circle">
+            <img class="post__account__img" src="{{article.writerProfileUrl}}" />
           </div>
-          <p class="comment__item__article">
-            {{comment.content}}
-          </p>
-        </li>
-      </for>
+          <p class="post__account__nickname">{{article.writerName}}</p>
+        </div>
+        <img class="post__img" src="{{article.imageUrl}}"/>
+        <div class="post__menu">
+          <ul class="post__menu__personal">
+            <li>
+              <button class="post__menu__btn" id="like-btn" data-article-id="{{article.articleId}}">
+                <img src="./img/like.svg" />
+                <p class="post__cnt">{{article.likeCnt}}</p>
+              </button>
+            </li>
+            <li>
+              <button class="post__menu__btn">
+                <img src="./img/comment.svg" />
+                <p class="post__cnt" id="total-comment-cnt">0</p>
+              </button>
+            </li>
+          </ul>
+          <button class="post__menu__btn">
+            <img src="./img/bookMark.svg" />
+          </button>
+        </div>
+        <p class="post__article">
+          {{article.content}}
+        </p>
+      </div>
 
-      <button id="show-all-btn" class="btn btn_ghost btn_size_m">
-        댓글 로딩 중...
-      </button>
-    </ul>
+      <ul class="comment" id="comment-list">
+        <for cur="comment" range="comments">
+          <li class="comment__item">
+            <div class="comment__item__user">
+              <div class="profile-circle">
+                <img class="comment__item__user__img" src="{{comment.writerProfileUrl}}"/>
+              </div>
+              <p class="comment__item__user__nickname">{{comment.writerName}}</p>
+            </div>
+            <p class="comment__item__article">
+              {{comment.content}}
+            </p>
+          </li>
+        </for>
+
+        <button id="show-all-btn" class="btn btn_ghost btn_size_m">
+          댓글 로딩 중...
+        </button>
+      </ul>
+    </if>
 
     <nav class="nav">
       <ul class="nav__menu">
-
         <li class="nav__menu__item">
           <if condition="hasPrev">
             <a class="nav__menu__item__btn" href="/?page={{prevId}}">
@@ -104,7 +95,7 @@
         </li>
 
         <li class="nav__menu__item">
-          <a class="btn btn_ghost btn_size_m" href="/login">댓글 작성</a>
+          <a class="btn btn_ghost btn_size_m" href="/comment">댓글 작성</a>
         </li>
 
         <li class="nav__menu__item">
@@ -121,7 +112,6 @@
             </a>
           </if>
         </li>
-
       </ul>
     </nav>
   </div>
@@ -129,18 +119,62 @@
 
 <script>
   document.addEventListener("DOMContentLoaded", () => {
-    // 1. 화면에 있는 댓글 요소들 가져오기
-    const commentItems = document.querySelectorAll(".comment__item");
+    const images = document.querySelectorAll('.post__account__img, .comment__item__user__img');
 
-    // 2. 조작할 버튼들 가져오기
+    images.forEach((img) => {
+      if (!img.getAttribute('src') || img.getAttribute('src').trim() === "") {
+        img.classList.add('hidden');
+      }
+
+      img.addEventListener('error', () => {
+        img.classList.add('hidden');
+      });
+    });
+
+    // ---------------------------------------------------------
+    // 1. [수정] 좋아요 버튼 이벤트 핸들러 (응답 확인 후 숫자 증가)
+    // ---------------------------------------------------------
+    const likeBtn = document.getElementById("like-btn");
+
+    if (likeBtn) {
+      likeBtn.addEventListener("click", () => {
+        const articleId = likeBtn.getAttribute("data-article-id");
+
+        if (articleId) {
+          fetch(`/article/like?articleId=${articleId}`, {
+            method: 'GET'
+          })
+          .then(response => {
+            if (response.ok) {
+              return response.text();
+            }
+            throw new Error("Network response was not ok");
+          })
+          .then(data => {
+            const countElem = likeBtn.querySelector(".post__cnt");
+            if (countElem) {
+              // 현재 숫자를 가져와서 정수로 변환 (실패 시 0)
+              let currentCount = parseInt(countElem.innerText, 10) || 0;
+              countElem.innerText = currentCount + 1;
+            }
+          })
+          .catch(err => {
+            console.error("좋아요 요청 실패:", err);
+          });
+        }
+      });
+    }
+
+    // ---------------------------------------------------------
+    // 2. 기존 댓글 관련 로직 (변경 없음)
+    // ---------------------------------------------------------
+    const commentItems = document.querySelectorAll(".comment__item");
     const showAllBtn = document.getElementById("show-all-btn");
     const totalCommentCntDisplay = document.getElementById("total-comment-cnt");
 
-    // 3. 개수 세기
     const totalCount = commentItems.length;
     const LIMIT = 3;
 
-    // 상단 아이콘 옆 숫자 업데이트
     if (totalCommentCntDisplay) {
       totalCommentCntDisplay.innerText = totalCount;
     }

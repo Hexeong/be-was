@@ -11,6 +11,7 @@ public enum StaticResourceType {
     JS("js", "text/javascript"),
     ICO("ico", "image/x-icon"),
     PNG("png", "image/png"),
+    JPEG("jpeg", "image/jpeg"),
     JPG("jpg", "image/jpeg"),
     SVG("svg", "image/svg+xml");
 
