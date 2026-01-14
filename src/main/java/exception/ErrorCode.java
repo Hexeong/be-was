@@ -15,7 +15,8 @@ public enum ErrorCode {
     AUTHENTICATION_FAILED(HttpStatus.FOUND, "인증에 실패하였습니다."),
     NO_ARTICLE_DATA(HttpStatus.NOT_FOUND, "Article 데이터가 없습니다."),
     BAD_REQUEST(HttpStatus.BAD_REQUEST, "요청 메서드와 URL은 같지만, 잘못된 방식으로 요청하였습니다."),
-    REGISTRATION_FIELD_ERROR(HttpStatus.BAD_REQUEST, "회원 가입 중 입력 필드를 잘못 입력하셨습니다.");
+    REGISTRATION_FIELD_ERROR(HttpStatus.BAD_REQUEST, "회원 가입 중 입력 필드를 잘못 입력하셨습니다."),
+    ARTICLE_CREATE_REQUEST_WITH_NO_FILE(HttpStatus.BAD_REQUEST, "게시물 생성 과정에서 파일을 업로드를 하지 않았습니다.");
 
     private final HttpStatus status;
     private final String message;
