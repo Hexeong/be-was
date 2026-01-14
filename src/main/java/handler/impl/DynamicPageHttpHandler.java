@@ -37,6 +37,20 @@ public class DynamicPageHttpHandler implements DynamicHttpHandler {
         int pageNum = Integer.parseInt(page);
         int totalCount = ArticleDao.count();
 
+        if (totalCount == 0) {
+            model.put("hasArticle", false);
+            model.put("noPrev", true);
+            model.put("noNext", true);
+
+            if (isLoginStatus(req, model)) {
+                return new ModelAndView(model, "/main/index.html");
+            }
+            return new ModelAndView(model, "/index.html");
+        }
+
+        if (pageNum >= totalCount)
+            throw new CustomException(ErrorCode.BAD_REQUEST);
+
         Optional<Article> findArticle = ArticleDao.findByIndex(pageNum);
         if (findArticle.isEmpty() && totalCount > 0) {
             pageNum = 0;
@@ -44,6 +58,7 @@ public class DynamicPageHttpHandler implements DynamicHttpHandler {
         }
 
         Article article = findArticle.orElseThrow(() -> new CustomException(ErrorCode.NO_ARTICLE_DATA));
+        model.put("hasArticle", true);
         model.put("article", article);
 
         List<Comment> comments = CommentDao.findAllByArticleId(article.getArticleId());

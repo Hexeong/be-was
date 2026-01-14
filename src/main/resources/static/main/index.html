@@ -40,53 +40,55 @@
     </ul>
   </header>
   <div class="wrapper">
-    <div class="post">
-      <div class="post__account">
-        <img class="post__account__img" />
-        <p class="post__account__nickname">{{article.writerName}}</p>
+    <if condition="hasArticle">
+      <div class="post">
+        <div class="post__account">
+          <img class="post__account__img" />
+          <p class="post__account__nickname">{{article.writerName}}</p>
+        </div>
+        <img class="post__img" />
+        <div class="post__menu">
+          <ul class="post__menu__personal">
+            <li>
+              <button class="post__menu__btn" id="like-btn" data-article-id="{{article.articleId}}">
+                <img src="./img/like.svg" />
+                <p class="post__cnt">{{article.likeCnt}}</p>
+              </button>
+            </li>
+            <li>
+              <button class="post__menu__btn">
+                <img src="./img/comment.svg" />
+                <p class="post__cnt" id="total-comment-cnt">0</p>
+              </button>
+            </li>
+          </ul>
+          <button class="post__menu__btn">
+            <img src="./img/bookMark.svg" />
+          </button>
+        </div>
+        <p class="post__article">
+          {{article.content}}
+        </p>
       </div>
-      <img class="post__img" />
-      <div class="post__menu">
-        <ul class="post__menu__personal">
-          <li>
-            <button class="post__menu__btn" id="like-btn" data-article-id="{{article.articleId}}">
-              <img src="./img/like.svg" />
-              <p class="post__cnt">{{article.likeCnt}}</p>
-            </button>
+
+      <ul class="comment" id="comment-list">
+        <for cur="comment" range="comments">
+          <li class="comment__item">
+            <div class="comment__item__user">
+              <img class="comment__item__user__img" />
+              <p class="comment__item__user__nickname">{{comment.writerName}}</p>
+            </div>
+            <p class="comment__item__article">
+              {{comment.content}}
+            </p>
           </li>
-          <li>
-            <button class="post__menu__btn">
-              <img src="./img/comment.svg" />
-              <p class="post__cnt" id="total-comment-cnt">0</p>
-            </button>
-          </li>
-        </ul>
-        <button class="post__menu__btn">
-          <img src="./img/bookMark.svg" />
+        </for>
+
+        <button id="show-all-btn" class="btn btn_ghost btn_size_m">
+          댓글 로딩 중...
         </button>
-      </div>
-      <p class="post__article">
-        {{article.content}}
-      </p>
-    </div>
-
-    <ul class="comment" id="comment-list">
-      <for cur="comment" range="comments">
-        <li class="comment__item">
-          <div class="comment__item__user">
-            <img class="comment__item__user__img" />
-            <p class="comment__item__user__nickname">{{comment.writerName}}</p>
-          </div>
-          <p class="comment__item__article">
-            {{comment.content}}
-          </p>
-        </li>
-      </for>
-
-      <button id="show-all-btn" class="btn btn_ghost btn_size_m">
-        댓글 로딩 중...
-      </button>
-    </ul>
+      </ul>
+    </if>
 
     <nav class="nav">
       <ul class="nav__menu">
