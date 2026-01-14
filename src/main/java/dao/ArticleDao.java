@@ -42,7 +42,11 @@ public class ArticleDao {
     }
 
     public static List<Article> findAll() {
-        String sql = "SELECT * FROM ARTICLE ORDER BY createdAt DESC";
+        String sql = "SELECT a.*, u.profileImageUrl " +
+                "FROM ARTICLE a " +
+                "LEFT JOIN USERS u ON a.writerId = u.userId " +
+                "ORDER BY a.createdAt DESC";
+
         List<Article> articles = new ArrayList<>();
 
         Connection conn = null;
@@ -69,7 +73,10 @@ public class ArticleDao {
     }
 
     public static Optional<Article> findByIndex(int index) {
-        String sql = "SELECT * FROM ARTICLE ORDER BY createdAt DESC LIMIT 1 OFFSET ?";
+        String sql = "SELECT a.*, u.profileImageUrl " +
+                "FROM ARTICLE a " +
+                "LEFT JOIN USERS u ON a.writerId = u.userId " +
+                "ORDER BY a.createdAt DESC LIMIT 1 OFFSET ?";
 
         Connection conn = null;
         PreparedStatement pstmt = null;
@@ -176,6 +183,7 @@ public class ArticleDao {
     }
 
     private static Article mapResultSetToArticle(ResultSet rs) throws SQLException {
+        // [수정] Article 생성자 변경 반영 (profileImageUrl 추가)
         return new Article(
                 rs.getString("articleId"),
                 rs.getString("content"),
@@ -183,6 +191,7 @@ public class ArticleDao {
                 rs.getInt("likeCnt"),
                 rs.getString("writerId"),
                 rs.getString("writerName"),
+                rs.getString("profileImageUrl"), // JOIN으로 가져온 컬럼 (u.profileImageUrl)
                 rs.getString("createdAt")
         );
     }
