@@ -58,7 +58,12 @@ class HttpMessageHandlerMappingTest {
         HandlerAdapter adapter = context.getHandlerAdapter(handler);
 
         // 3. 실행
-        ModelAndView mv = adapter.handle(req, res, handler);
+        ModelAndView mv = null;
+        try {
+            mv = adapter.handle(req, res, handler);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
 
         // then
         assertAll(
@@ -99,7 +104,12 @@ class HttpMessageHandlerMappingTest {
 
         // 2. 핸들러를 수행할 어댑터 조회
         HandlerAdapter adapter = context.getHandlerAdapter(handler);
-        ModelAndView mv = adapter.handle(req, res, handler);
+        ModelAndView mv = null;
+        try {
+            mv = adapter.handle(req, res, handler);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
 
         // then
         // 1. 매핑된 동적 핸들러가 없음을 검증
