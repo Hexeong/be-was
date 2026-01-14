@@ -123,7 +123,12 @@ public class DynamicPageHttpHandler implements DynamicHttpHandler {
 
     @LoginRequired
     @RequestMapping(method = RequestMethod.GET, path = {"/article", "/article/index.html"})
-    public ModelAndView article(@SessionUser User user, Model model) {
+    public ModelAndView article(HttpRequest req, @SessionUser User user, Model model) {
+        String alertMessage = CookieExtractor.getValue(req, "alertMessage");
+        if (alertMessage != null) {
+            model.put("alertMessage", URLDecoder.decode(alertMessage, StandardCharsets.UTF_8));
+        }
+
         model.put("username", user.getName());
         return new ModelAndView(model, "/article/index.html");
     }
