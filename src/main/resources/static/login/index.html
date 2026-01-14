@@ -1,58 +1,91 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link href="../reset.css" rel="stylesheet" />
-    <link href="../global.css" rel="stylesheet" />
-  </head>
-  <body>
-    <div class="container">
-      <header class="header">
-        <a href="/"><img src="../img/signiture.svg" /></a>
-        <ul class="header__menu">
-          <li class="header__menu__item">
-            <a class="btn btn_contained btn_size_s" href="/login">로그인</a>
-          </li>
-          <li class="header__menu__item">
-            <a class="btn btn_ghost btn_size_s" href="/registration">
-              회원 가입
-            </a>
-          </li>
-        </ul>
-      </header>
-      <div class="page">
-        <h2 class="page-title">로그인</h2>
-        <form class="form" action="/user/login" method="POST">
-          <div class="textfield textfield_size_s">
-            <p class="title_textfield">아이디</p>
-            <input
-              class="input_textfield"
-              placeholder="아이디를 입력해주세요"
-              name="userId"
-              autocomplete="username"
-            />
-          </div>
-          <div class="textfield textfield_size_s">
-            <p class="title_textfield">비밀번호</p>
-            <input
-              class="input_textfield"
-              type="password"
-              name="password"
-              placeholder="비밀번호를 입력해주세요"
-              autocomplete="current-password"
-            />
-          </div>
-          <button
-            id="login-btn"
-            class="btn btn_contained btn_size_m"
-            style="margin-top: 24px"
-            type="submit"
-          >
-            로그인
-          </button>
-        </form>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link href="../reset.css" rel="stylesheet" />
+  <link href="../global.css" rel="stylesheet" />
+</head>
+<body>
+<div class="container">
+  <header class="header">
+    <a href="/"><img src="../img/signiture.svg" /></a>
+    <ul class="header__menu">
+      <li class="header__menu__item">
+        <a class="btn btn_contained btn_size_s" href="/login">로그인</a>
+      </li>
+      <li class="header__menu__item">
+        <a class="btn btn_ghost btn_size_s" href="/registration">
+          회원 가입
+        </a>
+      </li>
+    </ul>
+  </header>
+  <div class="page">
+    <h2 class="page-title">로그인</h2>
+    <form class="form" action="/user/login" method="POST">
+      <div class="textfield textfield_size_s">
+        <p class="title_textfield">아이디</p>
+        <input
+                class="input_textfield"
+                placeholder="아이디를 입력해주세요"
+                name="userId"
+                autocomplete="username"
+        />
       </div>
-    </div>
-  </body>
+      <div class="textfield textfield_size_s">
+        <p class="title_textfield">비밀번호</p>
+        <input
+                class="input_textfield"
+                type="password"
+                name="password"
+                placeholder="비밀번호를 입력해주세요"
+                autocomplete="current-password"
+        />
+      </div>
+      <button
+              id="login-btn"
+              class="btn btn_contained btn_size_m"
+              style="margin-top: 24px"
+              type="submit"
+      >
+        로그인
+      </button>
+    </form>
+  </div>
+</div>
+
+<script>
+  document.addEventListener("DOMContentLoaded", () => {
+    // =========================================================
+    // 서버 메시지 처리 (로그인 실패 시나리오 대응)
+    // =========================================================
+
+    // 1. 단순 알림 (예: 비밀번호 불일치)
+    const alertMsg = "{{alertMessage}}";
+    if (alertMsg && alertMsg.trim() !== "") {
+      alert(alertMsg);
+      // 알림 확인 후 쿠키 삭제 (새로고침 시 재실행 방지)
+      document.cookie = "alertMessage=; path=/; expires=Thu, 01 Jan 1970 00:00:01 GMT;";
+    }
+
+    // 2. 확인/취소 알림 (예: 아이디 없음 -> 회원가입 권유)
+    const confirmMsg = "{{confirmMessage}}";
+    const confirmUrl = "{{confirmUrl}}";
+
+    if (confirmMsg && confirmMsg.trim() !== "") {
+      const isConfirmed = confirm(confirmMsg);
+
+      // 메시지 띄운 직후 쿠키 삭제
+      document.cookie = "confirmMessage=; path=/; expires=Thu, 01 Jan 1970 00:00:01 GMT;";
+      document.cookie = "confirmUrl=; path=/; expires=Thu, 01 Jan 1970 00:00:01 GMT;";
+
+      // [확인]을 눌렀고, 이동할 URL이 있다면 이동
+      if (isConfirmed && confirmUrl && confirmUrl.trim() !== "") {
+        location.href = confirmUrl;
+      }
+    }
+  });
+</script>
+</body>
 </html>

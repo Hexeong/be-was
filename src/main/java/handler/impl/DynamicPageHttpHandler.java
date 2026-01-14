@@ -17,6 +17,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import resolver.view.ModelAndView;
 
+import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Optional;
 
@@ -74,6 +76,21 @@ public class DynamicPageHttpHandler implements DynamicHttpHandler {
 
     @RequestMapping(method = RequestMethod.GET, path = {"/login", "/login/index.html"})
     public ModelAndView loginPage(HttpRequest req, Model model) {
+        String confirmCookie = CookieExtractor.getValue(req, "confirmMessage");
+        if (confirmCookie != null) {
+            model.put("confirmMessage", URLDecoder.decode(confirmCookie, StandardCharsets.UTF_8));
+        }
+
+        String urlCookie = CookieExtractor.getValue(req, "confirmUrl");
+        if (urlCookie != null) {
+            model.put("confirmUrl", URLDecoder.decode(urlCookie, StandardCharsets.UTF_8));
+        }
+
+        String alertMessage = CookieExtractor.getValue(req, "alertMessage");
+        if (alertMessage != null) {
+            model.put("alertMessage", URLDecoder.decode(alertMessage, StandardCharsets.UTF_8));
+        }
+
         return new ModelAndView(model, "/login/index.html");
     }
 
