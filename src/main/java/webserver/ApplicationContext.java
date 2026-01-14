@@ -20,7 +20,6 @@ import handler.HandlerMapping;
 import handler.RouteKey;
 
 import java.io.File;
-import java.io.IOException;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
@@ -171,7 +170,7 @@ public class ApplicationContext {
         return instances;
     }
 
-    public void doDispatch(HttpRequest req, HttpResponse res) throws IOException {
+    public void doDispatch(HttpRequest req, HttpResponse res) throws Exception {
         dispatcher.doDispatch(req, res);
     }
 
