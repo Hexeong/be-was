@@ -14,7 +14,7 @@ import java.util.Optional;
 public class ArticleDao {
 
     public static void create(Article article) {
-        String sql = "INSERT INTO ARTICLE (articleId, content, likeCnt, writerId, writerName, createdAt) VALUES (?, ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO ARTICLE (articleId, content, imageUrl, likeCnt, writerId, writerName, createdAt) VALUES (?, ?, ?, ?, ?, ?, ?)";
 
         Connection conn = null;
         PreparedStatement pstmt = null;
@@ -25,10 +25,11 @@ public class ArticleDao {
 
             pstmt.setString(1, article.getArticleId());
             pstmt.setString(2, article.getContent());
-            pstmt.setInt(3, article.getLikeCnt());
-            pstmt.setString(4, article.getWriterId());
-            pstmt.setString(5, article.getWriterName());
-            pstmt.setString(6, article.getCreatedAt());
+            pstmt.setString(3, article.getImageUrl());
+            pstmt.setInt(4, article.getLikeCnt());
+            pstmt.setString(5, article.getWriterId());
+            pstmt.setString(6, article.getWriterName());
+            pstmt.setString(7, article.getCreatedAt());
 
             pstmt.executeUpdate();
 
@@ -120,13 +121,7 @@ public class ArticleDao {
         }
     }
 
-    /**
-     * 특정 articleId가 최신순(createdAt DESC)으로 정렬했을 때 몇 번째 인덱스인지 반환합니다.
-     * @param articleId 찾으려는 게시글 ID
-     * @return 0부터 시작하는 인덱스 (찾지 못한 경우 -1 반환)
-     */
     public static int findIndexByArticleId(String articleId) {
-        // ROW_NUMBER()를 사용하여 정렬 순서대로 번호를 매긴 후, 해당 articleId의 번호를 조회
         String sql = "SELECT rnum FROM (" +
                 "    SELECT articleId, ROW_NUMBER() OVER (ORDER BY createdAt DESC) as rnum " +
                 "    FROM ARTICLE" +
@@ -146,7 +141,7 @@ public class ArticleDao {
                 return rs.getInt(1) - 1;
             }
 
-            return -1; // 해당 articleId가 존재하지 않을 경우
+            return -1;
 
         } catch (SQLException e) {
             throw new RuntimeException("게시글 인덱스 조회 실패", e);
@@ -184,6 +179,7 @@ public class ArticleDao {
         return new Article(
                 rs.getString("articleId"),
                 rs.getString("content"),
+                rs.getString("imageUrl"),
                 rs.getInt("likeCnt"),
                 rs.getString("writerId"),
                 rs.getString("writerName"),
