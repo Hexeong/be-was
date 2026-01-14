@@ -1,6 +1,8 @@
 package resolver.argument;
 
 import annotation.Formdata;
+import annotation.MultipartFormdata;
+import model.MultipartFile;
 import model.http.HttpRequest;
 
 import java.lang.reflect.Constructor;
@@ -9,6 +11,7 @@ import java.lang.reflect.Parameter;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -19,52 +22,112 @@ public class FormDataArgumentResolver implements ArgumentResolver {
 
     @Override
     public boolean supports(Parameter parameter) {
-        return parameter.isAnnotationPresent(Formdata.class);
+        return parameter.isAnnotationPresent(Formdata.class)
+                || parameter.isAnnotationPresent(MultipartFormdata.class);
     }
 
     @Override
     public Object resolve(Parameter parameter, HttpRequest request) {
         String bodyText = request.bodyText();
+        Map<String, Object> dataMap; // String 뿐만 아니라 MultipartFile도 담기 위해 Object로 변경
 
-        Map<String, String> dataMap = parseBody(bodyText);
+        if (parameter.isAnnotationPresent(MultipartFormdata.class)) {
+            dataMap = parseMultipart(bodyText, request.headers().get("content-type"));
+        } else {
+            dataMap = parseUrlEncoded(bodyText);
+        }
 
         return bindData(parameter.getType(), dataMap);
     }
 
-    private Map<String, String> parseBody(String bodyText) {
-        if (bodyText == null || bodyText.isBlank()) {
-            return Map.of();
-        }
+    // URL Encoded는 String 값만 가짐
+    private Map<String, Object> parseUrlEncoded(String bodyText) {
+        if (bodyText == null || bodyText.isBlank()) return Map.of();
 
         return Arrays.stream(bodyText.split(DATA_DELIMITER))
-                .map(token -> token.split(KEY_VALUE_DELIMITER, 2)) // 값에 '='가 포함될 경우 대비
+                .map(token -> token.split(KEY_VALUE_DELIMITER, 2))
                 .filter(arr -> arr.length == 2)
                 .collect(Collectors.toMap(
                         arr -> decode(arr[0]),
                         arr -> decode(arr[1]),
-                        (oldVal, newVal) -> oldVal // 중복 키 발생 시 기존 값 유지
+                        (oldVal, newVal) -> oldVal
                 ));
     }
 
-    // [AI] 리플렉션을 사용하여 Map의 데이터를 객체 필드에 주입
-    private <T> T bindData(Class<T> clazz, Map<String, String> dataMap) {
+    private Map<String, Object> parseMultipart(String bodyText, String contentType) {
+        if (bodyText == null || bodyText.isBlank()) return Map.of();
+
+        Map<String, Object> dataMap = new HashMap<>();
+        String boundary = "--" + contentType.substring(contentType.indexOf("boundary=") + 9);
+        String[] parts = bodyText.split(boundary);
+
+        for (String part : parts) {
+            if (part.isBlank() || part.trim().equals("--")) continue;
+
+            int headerEndIndex = part.indexOf("\r\n\r\n");
+            if (headerEndIndex == -1) continue;
+
+            String headers = part.substring(0, headerEndIndex);
+            String content = part.substring(headerEndIndex + 4);
+
+            if (content.endsWith("\r\n")) {
+                content = content.substring(0, content.length() - 2);
+            }
+
+            String name = extractHeaderValue(headers, "name=\"");
+
+            if (headers.contains("filename=\"")) {
+                // 파일명 추출
+                String filename = extractHeaderValue(headers, "filename=\"");
+
+                // 파일명이 비어있거나(null or empty), 내용이 없으면 객체를 생성하지 않음 (Skip)
+                if (filename == null || filename.isBlank()) {
+                    continue;
+                }
+
+                byte[] fileBytes = content.getBytes(StandardCharsets.ISO_8859_1);
+
+                // 파일이 진짜 있을 때만 생성
+                MultipartFile multipartFile = new MultipartFile(filename, contentType, fileBytes);
+                dataMap.put(name, multipartFile);
+
+            } else {
+                // 일반 필드
+                byte[] rawBytes = content.getBytes(StandardCharsets.ISO_8859_1);
+                String utf8Content = new String(rawBytes, StandardCharsets.UTF_8);
+                dataMap.put(name, utf8Content);
+            }
+        }
+        return dataMap;
+    }
+
+    // 헤더 값 추출 헬퍼
+    private String extractHeaderValue(String headers, String key) {
+        int startIndex = headers.indexOf(key);
+        if (startIndex == -1) return null;
+        String value = headers.substring(startIndex + key.length());
+        return value.substring(0, value.indexOf("\""));
+    }
+
+    private <T> T bindData(Class<T> clazz, Map<String, Object> dataMap) {
         try {
-            // 1. 기본 생성자로 인스턴스 생성 (이제 Model에 기본 생성자가 있으므로 성공함)
             Constructor<T> constructor = clazz.getDeclaredConstructor();
             constructor.setAccessible(true);
             T instance = constructor.newInstance();
 
-            // 2. 필드 순회 및 주입
             for (Field field : clazz.getDeclaredFields()) {
                 field.setAccessible(true);
                 String paramName = field.getName();
 
                 if (dataMap.containsKey(paramName)) {
-                    String value = dataMap.get(paramName);
+                    Object value = dataMap.get(paramName);
 
-                    // 타입 변환 로직 추가
-                    Object convertedValue = convertValue(field.getType(), value);
-                    field.set(instance, convertedValue);
+                    // 타입 변환 및 주입
+                    if (field.getType() == MultipartFile.class && value instanceof MultipartFile) {
+                        field.set(instance, value);
+                    } else if (value instanceof String) {
+                        field.set(instance, convertValue(field.getType(), (String) value));
+                    }
                 }
             }
             return instance;
@@ -73,21 +136,14 @@ public class FormDataArgumentResolver implements ArgumentResolver {
         }
     }
 
-    // String을 필드 타입에 맞게 변환하는 헬퍼 메서드
     private Object convertValue(Class<?> type, String value) {
-        if (type == int.class || type == Integer.class) {
-            return Integer.parseInt(value);
-        } else if (type == long.class || type == Long.class) {
-            return Long.parseLong(value);
-        }
-        return value; // 기본은 String
+        if (type == int.class || type == Integer.class) return Integer.parseInt(value);
+        if (type == long.class || type == Long.class) return Long.parseLong(value);
+        return value;
     }
 
     private String decode(String value) {
-        try {
-            return URLDecoder.decode(value, StandardCharsets.UTF_8);
-        } catch (Exception e) {
-            return value;
-        }
+        try { return URLDecoder.decode(value, StandardCharsets.UTF_8); }
+        catch (Exception e) { return value; }
     }
 }
