@@ -116,8 +116,13 @@ public class DynamicPageHttpHandler implements DynamicHttpHandler {
 
     @LoginRequired
     @RequestMapping(method = RequestMethod.GET, path = {"/mypage", "/mypage/index.html"})
-    public ModelAndView myPage(@SessionUser User user, Model model) {
-        model.put("username", user.getName());
+    public ModelAndView myPage(HttpRequest req, @SessionUser User user, Model model) {
+        String alertMessage = CookieExtractor.getValue(req, "alertMessage");
+        if (alertMessage != null) {
+            model.put("alertMessage", URLDecoder.decode(alertMessage, StandardCharsets.UTF_8));
+        }
+
+        model.put("user", user);
         return new ModelAndView(model, "/mypage/index.html");
     }
 
@@ -129,14 +134,14 @@ public class DynamicPageHttpHandler implements DynamicHttpHandler {
             model.put("alertMessage", URLDecoder.decode(alertMessage, StandardCharsets.UTF_8));
         }
 
-        model.put("username", user.getName());
+        model.put("user", user);
         return new ModelAndView(model, "/article/index.html");
     }
 
     @LoginRequired
     @RequestMapping(method = RequestMethod.GET, path = {"/comment", "/comment/index.html"})
     public ModelAndView comment(HttpRequest req, @SessionUser User user, Model model) {
-        model.put("username", user.getName());
+        model.put("user", user);
 
         Object articleId = req.line().getQueryParameterList().get("articleId");
         if (articleId == null)
@@ -156,7 +161,7 @@ public class DynamicPageHttpHandler implements DynamicHttpHandler {
             if (user != null) {
                 log.debug("로그인 인증 성공 - User: {}, SID: {}", user.getName(), sid);
                 isLoggedIn = true;
-                model.put("username", user.getName());
+                model.put("user", user);
             } else {
                 log.debug("유효하지 않은 세션 ID (만료되었거나 조작됨) - SID: {}", sid);
             }
