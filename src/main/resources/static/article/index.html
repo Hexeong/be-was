@@ -26,7 +26,7 @@
       </header>
       <div class="page">
         <h2 class="page-title">게시글 작성</h2>
-        <form class="form" method="post" action="/article">
+        <form class="form" method="post" action="/article" enctype="multipart/form-data">
           <div class="textfield textfield_size_m">
             <p class="title_textfield">내용</p>
             <textarea
@@ -36,6 +36,12 @@
               name="content"
             ></textarea>
           </div>
+
+          <div class="textfield" style="margin-top: 16px; padding: 15px;">
+            <p class="title_textfield">이미지 첨부</p>
+            <input type="file" name="file" accept="image/*" class="input_textfield" style="padding-top: 10px;">
+          </div>
+
           <button
             id="registration-btn"
             class="btn btn_contained btn_size_m"
@@ -48,4 +54,19 @@
       </div>
     </div>
   </body>
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      // =========================================================
+      // 서버 메시지 처리 (로그인 실패 시나리오 대응)
+      // =========================================================
+
+      // 1. 단순 알림 (예: 비밀번호 불일치)
+      const alertMsg = "{{alertMessage}}";
+      if (alertMsg && alertMsg.trim() !== "") {
+        alert(alertMsg);
+        // 알림 확인 후 쿠키 삭제 (새로고침 시 재실행 방지)
+        document.cookie = "alertMessage=; path=/; expires=Thu, 01 Jan 1970 00:00:01 GMT;";
+      }}
+    )
+  </script>
 </html>
