@@ -29,7 +29,7 @@ public class ArticleHttpHandler implements DynamicHttpHandler {
      */
     @LoginRequired
     @RequestMapping(method = RequestMethod.POST, path = "/article")
-    public ModelAndView registerArticle(@SessionUser User user, Article article) {
+    public ModelAndView registerArticle(@SessionUser User user, @Formdata Article article) {
         setWriterInfo(user, article);
         ArticleDao.create(article);
 

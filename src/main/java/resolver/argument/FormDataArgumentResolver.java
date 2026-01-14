@@ -1,5 +1,6 @@
 package resolver.argument;
 
+import annotation.Formdata;
 import model.http.HttpRequest;
 
 import java.lang.reflect.Constructor;
@@ -18,12 +19,7 @@ public class FormDataArgumentResolver implements ArgumentResolver {
 
     @Override
     public boolean supports(Parameter parameter) {
-        // 기본 타입(String, int 등)이나 HttpRequest 등이 아닌, 개발자가 만든 커스텀 객체(Entity, DTO 등)인 경우 처리한다고 가정
-        Class<?> type = parameter.getType();
-        return !type.isPrimitive()
-                && !type.getName().startsWith("java.")
-                && !type.getName().startsWith("javax.")
-                && !type.equals(HttpRequest.class);
+        return parameter.isAnnotationPresent(Formdata.class);
     }
 
     @Override

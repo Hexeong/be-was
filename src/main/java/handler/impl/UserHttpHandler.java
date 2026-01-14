@@ -1,5 +1,6 @@
 package handler.impl;
 
+import annotation.Formdata;
 import annotation.Router;
 import annotation.RequestMapping;
 import annotation.Transactional;
@@ -8,7 +9,6 @@ import db.SessionStorage;
 import exception.CustomException;
 import exception.ErrorCode;
 import model.Model;
-import model.http.HttpStatus;
 import util.extractor.CookieExtractor;
 import model.http.HttpRequest;
 import model.http.HttpResponse;
@@ -28,7 +28,6 @@ public class UserHttpHandler implements DynamicHttpHandler {
     private static final Logger log = LoggerFactory.getLogger(UserHttpHandler.class);
 
     private static final String COOKIE_HEADER_KEY = "Set-Cookie";
-    private static final String HEADER_LOCATION = "Location";
     private static final String SESSION_ID_KEY = "sid";
     private static final String COOKIE_HEADER_SUFFIX = "; Path=/";
 
@@ -36,7 +35,7 @@ public class UserHttpHandler implements DynamicHttpHandler {
 
     @Transactional
     @RequestMapping(method = RequestMethod.POST, path = "/user/create")
-    public ModelAndView createUser(HttpResponse res, User user) {
+    public ModelAndView createUser(HttpResponse res, @Formdata User user) {
 
         if (user.getUserId().length() < 4 || user.getName().length() < 4 ||
                 user.getPassword().length() < 4 || user.getEmail().length() < 4)
@@ -61,7 +60,7 @@ public class UserHttpHandler implements DynamicHttpHandler {
     }
 
     @RequestMapping(method = RequestMethod.POST, path = "/user/login")
-    public ModelAndView login(HttpResponse res, Model model, User user) {
+    public ModelAndView login(HttpResponse res, Model model, @Formdata User user) {
 
         Optional<User> findUser = UserDao.findById(user.getUserId());
         if (findUser.isEmpty()) {

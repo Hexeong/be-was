@@ -18,7 +18,7 @@ public class CommentHttpHandler implements DynamicHttpHandler{
     @Transactional
     @LoginRequired
     @RequestMapping(method = RequestMethod.POST, path = "/comment")
-    public ModelAndView registerComment(@SessionUser User user, Comment comment) {
+    public ModelAndView registerComment(@SessionUser User user, @Formdata Comment comment) {
         setWriterInfo(user, comment);
         CommentDao.create(comment);
 
