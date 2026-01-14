@@ -71,6 +71,11 @@ public class DynamicPageHttpHandler implements DynamicHttpHandler {
 
     @RequestMapping(method = RequestMethod.GET, path = {"/registration", "/registration/index.html"})
     public ModelAndView registrationPage(HttpRequest req, Model model) {
+        String alertMessage = CookieExtractor.getValue(req, "alertMessage");
+        if (alertMessage != null) {
+            model.put("alertMessage", URLDecoder.decode(alertMessage, StandardCharsets.UTF_8));
+        }
+
         return new ModelAndView(model, "/registration/index.html");
     }
 

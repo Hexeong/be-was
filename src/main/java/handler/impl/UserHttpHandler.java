@@ -38,8 +38,21 @@ public class UserHttpHandler implements DynamicHttpHandler {
     @RequestMapping(method = RequestMethod.POST, path = "/user/create")
     public ModelAndView createUser(HttpResponse res, User user) {
 
-        // TODO:: 방어로직 필요
-        // TODO:: 각 필드에 대한 4글자 최소 길이 검사 로직 필요
+        if (user.getUserId().length() < 4 || user.getName().length() < 4 ||
+                user.getPassword().length() < 4 || user.getEmail().length() < 4)
+            throw new CustomException(ErrorCode.REGISTRATION_FIELD_ERROR);
+
+        if (UserDao.findById(user.getUserId()).isPresent()) {
+            String encodedMsg = URLEncoder.encode("입력하신 ID로 만들어진 계정이 이미 존재합니다.", StandardCharsets.UTF_8);
+            res.addHeader(COOKIE_HEADER_KEY, "alertMessage=" + encodedMsg + "; Path=/");
+            return new ModelAndView("redirect:/registration");
+        }
+
+        if (UserDao.findByName(user.getName()).isPresent()) {
+            String encodedMsg = URLEncoder.encode("입력하신 닉네임으로 만들어진 계정이 이미 존재합니다.", StandardCharsets.UTF_8);
+            res.addHeader(COOKIE_HEADER_KEY, "alertMessage=" + encodedMsg + "; Path=/");
+            return new ModelAndView("redirect:/registration");
+        }
 
         UserDao.create(user);
         setSessionCookie(res, user);
