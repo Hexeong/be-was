@@ -32,11 +32,11 @@ CREATE TABLE IF NOT EXISTS COMMENT (
 
 -- USERS
 INSERT INTO USERS (userId, password, name, email, profileImageUrl) VALUES
-                                                                       ('user1', '1234', 'Alice', 'alice@example.com', ''),
-                                                                       ('user2', '1234', 'Bob', 'bob@example.com', ''),
-                                                                       ('user3', '1234', 'Charlie', 'charlie@example.com', ''),
-                                                                       ('user4', '1234', 'David', 'david@example.com', ''),
-                                                                       ('user5', '1234', 'Eve', 'eve@example.com', '');
+                                                                       ('user1', '1234', 'Alice', 'alice@example.com', '/profile/user1.png'),
+                                                                       ('user2', '1234', 'Bob', 'bob@example.com', '/profile/user2.png'),
+                                                                       ('user3', '1234', 'Charlie', 'charlie@example.com', '/profile/user3.png'),
+                                                                       ('user4', '1234', 'David', 'david@example.com', '/profile/user4.png'),
+                                                                       ('user5', '1234', 'Eve', 'eve@example.com', '/profile/user5.png');
 
 -- ARTICLE
 INSERT INTO ARTICLE (articleId, content, imageUrl, likeCnt, writerId, writerName, createdAt) VALUES
