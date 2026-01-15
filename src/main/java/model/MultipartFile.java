@@ -36,6 +36,7 @@ public class MultipartFile {
         }
         return ""; // 확장자가 없는 경우
     }
+
     public void saveFileAs(String name, String path) {
         String extension = getExtension();
         File destFile = new File(UPLOAD_DIR + path, name + extension);
