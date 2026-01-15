@@ -52,9 +52,8 @@ public class UserHttpHandler implements DynamicHttpHandler {
         }
 
         UserDao.create(user);
-        setSessionCookie(res, user);
 
-        return new ModelAndView("redirect:/");
+        return new ModelAndView("redirect:/login");
     }
 
     @RequestMapping(method = RequestMethod.POST, path = "/user/login")
