@@ -55,7 +55,7 @@ be-was/
 4. MVC와 관련된 Naming은 사용하지 않는다.(Controller, Service, DTO, Repository 등)
 
 ## 문서
-- 자세한 클래스 및 메소드 정보는 [Javadoc](./docs/index.html)을 참고해주세요.
+- 자세한 클래스 및 메소드 정보는 [Javadoc](https://hexeong.github.io/be-was/docs/index.html)을 참고해주세요.
 
 ## 공부한 내용 정리
 - [Github Wiki 링크](https://github.com/Hexeong/be-was/wiki)
