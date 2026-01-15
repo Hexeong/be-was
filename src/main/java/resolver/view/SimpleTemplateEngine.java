@@ -28,7 +28,7 @@ public class SimpleTemplateEngine {
     private static final String FOR_END_TAG = "</for>";
 
     /**
-     * 1. 변수 치환 ({{ user.name }})
+     * 1. 변수 치환
      */
     public static String renderVariables(StringBuilder template, Model model) throws IOException {
         int startIndex = template.indexOf(VARIABLE_OPEN_IDENTIFIER);
@@ -48,7 +48,7 @@ public class SimpleTemplateEngine {
     }
 
     /**
-     * 2. 조건문 처리 (<if condition="...">)
+     * 2. 조건문 처리
      */
     public static void renderConditionals(StringBuilder template, Model model) throws IOException {
         int searchIdx = 0;
@@ -84,7 +84,7 @@ public class SimpleTemplateEngine {
     }
 
     /**
-     * 3. [추가] 반복문 처리 (<for cur="item" range="list"> ... </for>)
+     * 3. 반복문 처리
      */
     public static void renderLoops(StringBuilder template, Model model) throws IOException {
         int searchIdx = 0;

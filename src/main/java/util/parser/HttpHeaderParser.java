@@ -17,12 +17,7 @@ public class HttpHeaderParser {
 
     private HttpHeaderParser() {}
 
-    /**
-     * 넘어온 InputStream에 대해 readHeaderLine을 거쳐 바이트 스트림을 객체로 파싱합니다.
-     * @param inputStream
-     * @return Map<String, String> 타입의 헤더 정보
-     * @throws IOException
-     */
+
     public static Map<String, String> parse(InputStream inputStream) throws IOException {
         String line;
         Map<String, String> headers = new HashMap<>();
