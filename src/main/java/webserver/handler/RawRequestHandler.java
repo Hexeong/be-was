@@ -2,7 +2,6 @@ package webserver.handler;
 
 import java.io.*;
 import java.net.Socket;
-import java.net.SocketTimeoutException;
 
 import exception.CustomException;
 import model.http.HttpResponse;

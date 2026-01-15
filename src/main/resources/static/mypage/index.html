@@ -137,7 +137,6 @@
         e.preventDefault();
         alert("입력하신 비밀번호와 비밀번호 확인이 일치하지 않습니다.");
       }
-      // 일치하면 아무것도 하지 않으므로 폼이 정상적으로 전송됩니다.
     });
 
     editBtn.addEventListener('click', () => {
@@ -147,6 +146,13 @@
     fileInput.addEventListener('change', (e) => {
       const file = e.target.files[0];
       if (file) {
+        if (!file.type.startsWith('image/')) {
+          alert('지원하는 이미지 파일 형식이 아닙니다.');
+          e.target.value = '';
+          checkChanges();
+          return;
+        }
+
         const reader = new FileReader();
         reader.onload = (e) => {
           profilePreview.src = e.target.result;
@@ -159,7 +165,7 @@
 
     deleteBtn.addEventListener('click', () => {
       fileInput.value = '';
-      profilePreview.src = '../img/basic_profileImage.svg';
+      profilePreview.src = '/img/basic_profileImage.svg';
       deleteFlag.value = "true";
       checkChanges();
     });

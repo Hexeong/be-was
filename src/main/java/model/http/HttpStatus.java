@@ -18,7 +18,8 @@ public enum HttpStatus {
 
     INTERNAL_SERVER_ERROR(500, "Internal Server Error"),
     NOT_IMPLEMENTED(501, "Not Implemented"),
-    SERVICE_UNAVAILABLE(503, "Service Unavailable");
+    SERVICE_UNAVAILABLE(503, "Service Unavailable"),
+    PAYLOAD_TOO_LARGE(413, "Payload Too Large");
 
     private final int code;
     private final String message;
