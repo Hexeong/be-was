@@ -132,12 +132,18 @@
       }
     };
 
-    // [이벤트 1] 수정 버튼 클릭
+    submitBtn.addEventListener('click', (e) => {
+      if (passwordInput.value !== passwordConfirmInput.value) {
+        e.preventDefault();
+        alert("입력하신 비밀번호와 비밀번호 확인이 일치하지 않습니다.");
+      }
+      // 일치하면 아무것도 하지 않으므로 폼이 정상적으로 전송됩니다.
+    });
+
     editBtn.addEventListener('click', () => {
       fileInput.click();
     });
 
-    // [이벤트 2] 파일 선택 시
     fileInput.addEventListener('change', (e) => {
       const file = e.target.files[0];
       if (file) {
@@ -151,10 +157,9 @@
       checkChanges();
     });
 
-    // [이벤트 3] 삭제 버튼 클릭
     deleteBtn.addEventListener('click', () => {
       fileInput.value = '';
-      profilePreview.src = '../img/default_profile.png';
+      profilePreview.src = '../img/basic_profileImage.svg';
       deleteFlag.value = "true";
       checkChanges();
     });
