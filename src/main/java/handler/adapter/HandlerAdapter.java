@@ -6,5 +6,5 @@ import resolver.view.ModelAndView;
 
 public interface HandlerAdapter {
     boolean canAdapt(Object handler);
-    ModelAndView handle(HttpRequest req, HttpResponse res, Object handler);
+    ModelAndView handle(HttpRequest req, HttpResponse res, Object handler) throws Exception;
 }

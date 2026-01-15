@@ -9,8 +9,6 @@ import org.slf4j.LoggerFactory;
 import resolver.view.ModelAndView;
 import webserver.handler.ResourceResponseHandler;
 
-import java.io.IOException;
-
 public class Dispatcher {
     private static final Logger log = LoggerFactory.getLogger(Dispatcher.class);
 
@@ -20,7 +18,7 @@ public class Dispatcher {
         this.context = context;
     }
 
-    public void doDispatch(HttpRequest req, HttpResponse res) throws IOException {
+    public void doDispatch(HttpRequest req, HttpResponse res) throws Exception {
         HandlerExecutionChain mappedHandler = context.getHandler(req);
 
         if (mappedHandler == null) {

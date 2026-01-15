@@ -17,6 +17,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import resolver.view.ModelAndView;
 
+import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Optional;
 
@@ -35,6 +37,20 @@ public class DynamicPageHttpHandler implements DynamicHttpHandler {
         int pageNum = Integer.parseInt(page);
         int totalCount = ArticleDao.count();
 
+        if (totalCount == 0) {
+            model.put("hasArticle", false);
+            model.put("noPrev", true);
+            model.put("noNext", true);
+
+            if (isLoginStatus(req, model)) {
+                return new ModelAndView(model, "/main/index.html");
+            }
+            return new ModelAndView(model, "/index.html");
+        }
+
+        if (pageNum >= totalCount)
+            throw new CustomException(ErrorCode.BAD_REQUEST);
+
         Optional<Article> findArticle = ArticleDao.findByIndex(pageNum);
         if (findArticle.isEmpty() && totalCount > 0) {
             pageNum = 0;
@@ -42,6 +58,7 @@ public class DynamicPageHttpHandler implements DynamicHttpHandler {
         }
 
         Article article = findArticle.orElseThrow(() -> new CustomException(ErrorCode.NO_ARTICLE_DATA));
+        model.put("hasArticle", true);
         model.put("article", article);
 
         List<Comment> comments = CommentDao.findAllByArticleId(article.getArticleId());
@@ -69,32 +86,68 @@ public class DynamicPageHttpHandler implements DynamicHttpHandler {
 
     @RequestMapping(method = RequestMethod.GET, path = {"/registration", "/registration/index.html"})
     public ModelAndView registrationPage(HttpRequest req, Model model) {
+        String alertMessage = CookieExtractor.getValue(req, "alertMessage");
+        if (alertMessage != null) {
+            model.put("alertMessage", URLDecoder.decode(alertMessage, StandardCharsets.UTF_8));
+        }
+
         return new ModelAndView(model, "/registration/index.html");
     }
 
     @RequestMapping(method = RequestMethod.GET, path = {"/login", "/login/index.html"})
     public ModelAndView loginPage(HttpRequest req, Model model) {
+        String confirmCookie = CookieExtractor.getValue(req, "confirmMessage");
+        if (confirmCookie != null) {
+            model.put("confirmMessage", URLDecoder.decode(confirmCookie, StandardCharsets.UTF_8));
+        }
+
+        String urlCookie = CookieExtractor.getValue(req, "confirmUrl");
+        if (urlCookie != null) {
+            model.put("confirmUrl", URLDecoder.decode(urlCookie, StandardCharsets.UTF_8));
+        }
+
+        String alertMessage = CookieExtractor.getValue(req, "alertMessage");
+        if (alertMessage != null) {
+            model.put("alertMessage", URLDecoder.decode(alertMessage, StandardCharsets.UTF_8));
+        }
+
         return new ModelAndView(model, "/login/index.html");
     }
 
     @LoginRequired
     @RequestMapping(method = RequestMethod.GET, path = {"/mypage", "/mypage/index.html"})
-    public ModelAndView myPage(@SessionUser User user, Model model) {
-        model.put("username", user.getName());
+    public ModelAndView myPage(HttpRequest req, @SessionUser User user, Model model) {
+        String alertMessage = CookieExtractor.getValue(req, "alertMessage");
+        if (alertMessage != null) {
+            model.put("alertMessage", URLDecoder.decode(alertMessage, StandardCharsets.UTF_8));
+        }
+
+        model.put("user", user);
         return new ModelAndView(model, "/mypage/index.html");
     }
 
     @LoginRequired
     @RequestMapping(method = RequestMethod.GET, path = {"/article", "/article/index.html"})
-    public ModelAndView article(@SessionUser User user, Model model) {
-        model.put("username", user.getName());
+    public ModelAndView article(HttpRequest req, @SessionUser User user, Model model) {
+        String alertMessage = CookieExtractor.getValue(req, "alertMessage");
+        if (alertMessage != null) {
+            model.put("alertMessage", URLDecoder.decode(alertMessage, StandardCharsets.UTF_8));
+        }
+
+        model.put("user", user);
         return new ModelAndView(model, "/article/index.html");
     }
 
     @LoginRequired
     @RequestMapping(method = RequestMethod.GET, path = {"/comment", "/comment/index.html"})
-    public ModelAndView comment(@SessionUser User user, Model model) {
-        model.put("username", user.getName());
+    public ModelAndView comment(HttpRequest req, @SessionUser User user, Model model) {
+        model.put("user", user);
+
+        Object articleId = req.line().getQueryParameterList().get("articleId");
+        if (articleId == null)
+            throw new CustomException(ErrorCode.BAD_REQUEST);
+        model.put("articleId", articleId.toString());
+
         return new ModelAndView(model, "/comment/index.html");
     }
 
@@ -108,7 +161,7 @@ public class DynamicPageHttpHandler implements DynamicHttpHandler {
             if (user != null) {
                 log.debug("로그인 인증 성공 - User: {}, SID: {}", user.getName(), sid);
                 isLoggedIn = true;
-                model.put("username", user.getName());
+                model.put("user", user);
             } else {
                 log.debug("유효하지 않은 세션 ID (만료되었거나 조작됨) - SID: {}", sid);
             }

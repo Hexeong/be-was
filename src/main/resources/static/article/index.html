@@ -12,7 +12,7 @@
         <a href="/"><img src="../img/signiture.svg" /></a>
         <ul class="header__menu">
           <li class="header__menu__item">
-            <a class="btn btn_ghost btn_size_s" href="/mypage">안녕하세요, {{username}}님!</a>
+            <a class="btn btn_ghost btn_size_s" href="/mypage">안녕하세요, {{user.name}}님!</a>
           </li>
           <li class="header__menu__item">
             <a class="btn btn_contained btn_size_s" href="/article">글쓰기</a>
@@ -26,7 +26,7 @@
       </header>
       <div class="page">
         <h2 class="page-title">게시글 작성</h2>
-        <form class="form" method="post" action="/article">
+        <form class="form" method="post" action="/article" enctype="multipart/form-data">
           <div class="textfield textfield_size_m">
             <p class="title_textfield">내용</p>
             <textarea
@@ -36,6 +36,12 @@
               name="content"
             ></textarea>
           </div>
+
+          <div class="textfield" style="margin-top: 16px; padding: 15px;">
+            <p class="title_textfield">이미지 첨부</p>
+            <input type="file" name="file" accept="image/*" class="input_textfield" style="padding-top: 10px;">
+          </div>
+
           <button
             id="registration-btn"
             class="btn btn_contained btn_size_m"
@@ -48,4 +54,13 @@
       </div>
     </div>
   </body>
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      const alertMsg = "{{alertMessage}}";
+      if (alertMsg && alertMsg.trim() !== "") {
+        alert(alertMsg);
+        document.cookie = "alertMessage=; path=/; expires=Thu, 01 Jan 1970 00:00:01 GMT;";
+      }}
+    )
+  </script>
 </html>

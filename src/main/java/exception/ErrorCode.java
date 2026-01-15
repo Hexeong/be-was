@@ -13,7 +13,12 @@ public enum ErrorCode {
     METHOD_NOT_ALLOWED(HttpStatus.METHOD_NOT_ALLOWED, "해당 경로에 대해 요청 메서드를 지원하지 않습니다"),
     NOT_FOUND(HttpStatus.NOT_FOUND, "해당 페이지를 찾을 수 없습니다."),
     AUTHENTICATION_FAILED(HttpStatus.FOUND, "인증에 실패하였습니다."),
-    NO_ARTICLE_DATA(HttpStatus.NOT_FOUND, "Article 데이터가 없습니다.");
+    NO_ARTICLE_DATA(HttpStatus.NOT_FOUND, "Article 데이터가 없습니다."),
+    BAD_REQUEST(HttpStatus.BAD_REQUEST, "요청 메서드와 URL은 같지만, 잘못된 방식으로 요청하였습니다."),
+    REGISTRATION_FIELD_ERROR(HttpStatus.BAD_REQUEST, "회원 가입 중 입력 필드를 잘못 입력하셨습니다."),
+    ARTICLE_CREATE_REQUEST_WITH_NO_FILE(HttpStatus.BAD_REQUEST, "게시물 생성 과정에서 파일을 업로드를 하지 않았습니다."),
+    MISMATCHED_PASSWORD(HttpStatus.BAD_REQUEST, "입력하신 비밀번호와 비밀번호 확인 필드가 일치하지 않습니다."),
+    NOT_SUPPORTED_FILE_TYPE(HttpStatus.UNSUPPORTED_MEDIA_TYPE, "지원되지 않는 파일 타입입니다.");
 
     private final HttpStatus status;
     private final String message;

@@ -41,7 +41,7 @@ public class ResourceResponseHandler {
         }
 
         String fileExtension = FileTypeExtractor.extract(pathUrl);
-        res.headers().put(CONTENT_TYPE_HEADER_KEY, StaticResourceType.findByType(fileExtension).getContentType());
+        res.addHeader(CONTENT_TYPE_HEADER_KEY, StaticResourceType.findByType(fileExtension).getContentType());
 
         byte[] body = new byte[(int) file.length()];
 

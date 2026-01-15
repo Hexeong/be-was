@@ -34,16 +34,17 @@ public record ModelAndView(
         // 여기서는 byte[]를 만들어야 함. viewName을 보고 File을 읽어온 다음, Model에 있는 값에 대해 적용하는 방식
         if (viewName.startsWith(REDIRECT_IDENTIFIER)) {
             String redirectPath = viewName.substring(REDIRECT_IDENTIFIER.length());
-            res.headers().put(REDIRECT_HEADER_KEY, redirectPath);
             res.setStatus(HttpStatus.FOUND);
+            res.addHeader(REDIRECT_HEADER_KEY, redirectPath);
             return;
         }
 
-        renderView(res);
+        res.addHeader(CONTENT_TYPE_HEADER_KEY, StaticResourceType.HTML.getContentType());
+        res.setStatus(HttpStatus.OK);
+        renderView(res, this.viewName);
     }
 
-    private void renderView(HttpResponse res) throws IOException {
-        String pathName = viewName;
+    private void renderView(HttpResponse res, String pathName) throws IOException {
         if (!pathName.endsWith(".html")) {
             pathName += ".html";
         }
@@ -68,7 +69,5 @@ public record ModelAndView(
         // 응답 전송
         byte[] finalBytes = finalContent.getBytes(StandardCharsets.UTF_8);
         res.setBody(finalBytes);
-        res.headers().put(CONTENT_TYPE_HEADER_KEY, StaticResourceType.HTML.getContentType());
-        res.setStatus(HttpStatus.OK);
     }
 }

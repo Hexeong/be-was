@@ -1,6 +1,5 @@
 package model.http;
 
-import exception.CustomException;
 import model.http.sub.HttpVersion;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -8,23 +7,21 @@ import org.slf4j.LoggerFactory;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 
 public final class HttpResponse {
     private static final Logger log = LoggerFactory.getLogger(HttpResponse.class);
 
     private HttpVersion version;
     private HttpStatus status;
-    private Map<String, String> headers;
+    private Map<String, List<String>> headers;
     private byte[] body;
     private OutputStream out;
 
     public HttpResponse(
             HttpVersion version,
             HttpStatus status,
-            Map<String, String> headers,
+            Map<String, List<String>> headers, // 생성자 파라미터 변경
             byte[] body,
             OutputStream out
     ) {
@@ -55,6 +52,10 @@ public final class HttpResponse {
         );
     }
 
+    public void addHeader(String key, String value) {
+        headers.computeIfAbsent(key, k -> new ArrayList<>()).add(value);
+    }
+
     public void setBody(byte[] body) {
         this.body = body;
     }
@@ -75,11 +76,16 @@ public final class HttpResponse {
 
     private void writeHeader(DataOutputStream dos) {
         try {
-            dos.writeBytes( version.getVersion() + " " + status.getCode() + " " + status.getMessage() + " \r\n");
-            for (Map.Entry<String, String> header : headers.entrySet()) {
-                dos.writeBytes(header.getKey() + ":" + header.getValue() + "\r\n");
+            dos.writeBytes(version.getVersion() + " " + status.getCode() + " " + status.getMessage() + " \r\n");
+
+            for (Map.Entry<String, List<String>> entry : headers.entrySet()) {
+                String key = entry.getKey();
+                for (String value : entry.getValue()) {
+                    dos.writeBytes(key + ": " + value + "\r\n");
+                }
             }
-            dos.writeBytes("Content-Length:" + body.length + "\r\n");
+
+            dos.writeBytes("Content-Length: " + body.length + "\r\n");
             dos.writeBytes("\r\n");
         } catch (IOException e) {
             log.error(e.getMessage());
@@ -96,6 +102,8 @@ public final class HttpResponse {
         }
     }
 
+    // ... Getter, equals, hashCode, toString ...
+
     public HttpVersion getVersion() {
         return version;
     }
@@ -104,7 +112,8 @@ public final class HttpResponse {
         return status;
     }
 
-    public Map<String, String> headers() {
+    // [주의] 이제 Map<String, List<String>>을 반환함
+    public Map<String, List<String>> getHeaders() {
         return headers;
     }
 
@@ -120,12 +129,14 @@ public final class HttpResponse {
         return Objects.equals(this.version, that.version) &&
                 Objects.equals(this.status, that.status) &&
                 Objects.equals(this.headers, that.headers) &&
-                Objects.equals(this.body, that.body);
+                Arrays.equals(this.body, that.body); // byte[] 비교는 Arrays.equals 권장
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(version, status, headers, body);
+        int result = Objects.hash(version, status, headers);
+        result = 31 * result + Arrays.hashCode(body);
+        return result;
     }
 
     @Override
@@ -134,6 +145,6 @@ public final class HttpResponse {
                 "version=" + version + ", " +
                 "status=" + status + ", " +
                 "headers=" + headers + ", " +
-                "body=" + body + ']';
+                "body=" + Arrays.toString(body) + ']';
     }
 }

@@ -4,14 +4,16 @@ import java.util.Objects;
 
 public class User {
     private String userId;
+    private String profileImageUrl = "";
     private String password;
     private String name;
     private String email;
 
     public User() {}
 
-    public User(String userId, String password, String name, String email) {
+    public User(String userId, String profileImageUrl, String password, String name, String email) {
         this.userId = userId;
+        this.profileImageUrl = profileImageUrl;
         this.password = password;
         this.name = name;
         this.email = email;
@@ -25,6 +27,10 @@ public class User {
         return password;
     }
 
+    public String getProfileImageUrl() {
+        return profileImageUrl;
+    }
+
     public String getName() {
         return name;
     }
@@ -33,9 +39,27 @@ public class User {
         return email;
     }
 
+    public void setProfileImageUrl(String profileImageUrl) {
+        this.profileImageUrl = profileImageUrl;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
     @Override
     public String toString() {
-        return "User [userId=" + userId + ", password=" + password + ", name=" + name + ", email=" + email + "]";
+        return "User{" +
+                "userId='" + userId + '\'' +
+                ", profileImageUrl='" + profileImageUrl + '\'' +
+                ", password='" + password + '\'' +
+                ", name='" + name + '\'' +
+                ", email='" + email + '\'' +
+                '}';
     }
 
     @Override

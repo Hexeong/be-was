@@ -18,6 +18,7 @@ public class HttpBodyParser {
     private static final String VALID_TRANSFER_ENCODING_VALUE = "chunked";
     private static final String CONTENT_LENGTH_KEY = "content-length";
     private static final String UTF_8 = "UTF-8";
+    private static final String DEFAULT_CHARSET = "ISO-8859-1";
 
     /**
      * Tranfer-Encoding, Content-Length 헤더의 존재 유무에 따라 Body 파싱 로직을 진행합니다. 파싱 이후 전체를 UTF-8로 인코딩하여
@@ -100,17 +101,16 @@ public class HttpBodyParser {
     private static String parseFixedLengthBody(InputStream inputStream, Map<String, String> headers) throws IOException {
         try {
             int contentLength = Integer.parseInt(headers.get(CONTENT_LENGTH_KEY));
-
             byte[] bodyBytes = new byte[contentLength];
 
             int offset = 0;
             while (offset < contentLength) {
                 int read = inputStream.read(bodyBytes, offset, contentLength - offset);
-                if (read == -1) throw new IOException("Unexpected End of Stream in Fixed-Length Body");
+                if (read == -1) throw new IOException("Unexpected End of Stream");
                 offset += read;
             }
 
-            return new String(bodyBytes, UTF_8);
+            return new String(bodyBytes, DEFAULT_CHARSET);
         } catch (NumberFormatException e) {
             throw new IOException("Invalid Content-Length format", e);
         }
