@@ -60,7 +60,6 @@ public class CommentDao {
             rs = pstmt.executeQuery();
 
             while (rs.next()) {
-                // [수정] Comment 생성자에 profileImageUrl 추가 (u.profileImageUrl)
                 comments.add(new Comment(
                         rs.getString("commentId"),
                         rs.getString("content"),

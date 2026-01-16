@@ -8,11 +8,11 @@ import java.time.format.DateTimeFormatter;
 public class Article {
     private String articleId = IdGenerator.create();
     private String content;
-    private String imageUrl; // 게시글 첨부 이미지
+    private String imageUrl;
     private int likeCnt = 0;
     private String writerId;
     private String writerName;
-    private String writerProfileUrl; // [추가] 작성자 프로필 이미지
+    private String writerProfileUrl;
     private String createdAt = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
 
     public Article() {
@@ -94,7 +94,6 @@ public class Article {
         this.writerName = writerName;
     }
 
-    // [추가] Setter
     public void setWriterProfileUrl(String writerProfileUrl) {
         this.writerProfileUrl = writerProfileUrl;
     }

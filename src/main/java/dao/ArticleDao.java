@@ -183,7 +183,6 @@ public class ArticleDao {
     }
 
     private static Article mapResultSetToArticle(ResultSet rs) throws SQLException {
-        // [수정] Article 생성자 변경 반영 (profileImageUrl 추가)
         return new Article(
                 rs.getString("articleId"),
                 rs.getString("content"),

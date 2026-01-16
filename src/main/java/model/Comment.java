@@ -10,7 +10,7 @@ public class Comment {
     private String content;
     private String writerId;
     private String writerName;
-    private String writerProfileUrl; // [추가] 작성자 프로필 이미지
+    private String writerProfileUrl;
     private String articleId;
     private String createdAt = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
 
@@ -59,7 +59,6 @@ public class Comment {
         return writerName;
     }
 
-    // [추가] Getter
     public String getWriterProfileUrl() {
         return writerProfileUrl;
     }
@@ -80,7 +79,6 @@ public class Comment {
         this.writerName = writerName;
     }
 
-    // [추가] Setter
     public void setWriterProfileUrl(String writerProfileUrl) {
         this.writerProfileUrl = writerProfileUrl;
     }
@@ -96,7 +94,7 @@ public class Comment {
                 ", content='" + content + '\'' +
                 ", writerId='" + writerId + '\'' +
                 ", writerName='" + writerName + '\'' +
-                ", writerProfileUrl='" + writerProfileUrl + '\'' + // [추가]
+                ", writerProfileUrl='" + writerProfileUrl + '\'' +
                 ", articleId='" + articleId + '\'' +
                 ", createdAt='" + createdAt + '\'' +
                 '}';
