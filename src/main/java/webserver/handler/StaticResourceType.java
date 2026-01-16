@@ -25,7 +25,7 @@ public enum StaticResourceType {
 
     public static StaticResourceType findByType(String type) {
         for (StaticResourceType staticResourceType : StaticResourceType.values()) {
-            if (staticResourceType.fileExtension.equals(type)) {
+            if (staticResourceType.fileExtension.equals(type.toLowerCase())) {
                 return staticResourceType;
             }
         }
@@ -36,7 +36,7 @@ public enum StaticResourceType {
         String type = FileTypeExtractor.extract(pathUrl);
 
         return Arrays.stream(StaticResourceType.values())
-                .anyMatch(resourceType -> resourceType.fileExtension.equals(type));
+                .anyMatch(resourceType -> resourceType.fileExtension.equals(type.toLowerCase()));
     }
 
     public String getContentType() {
