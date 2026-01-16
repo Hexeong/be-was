@@ -43,15 +43,6 @@
         />
       </div>
       <div class="textfield textfield_size_s">
-        <p class="title_textfield">이메일</p>
-        <input
-                class="input_textfield"
-                type="email"
-                name="email"
-                placeholder="이메일을 입력해주세요"
-        />
-      </div>
-      <div class="textfield textfield_size_s">
         <p class="title_textfield">비밀번호</p>
         <input
                 class="input_textfield"
@@ -85,14 +76,11 @@
     const form = document.querySelector(".form");
 
     form.addEventListener("submit", (event) => {
-      // 검사할 input 필드들의 name 목록
-      const fields = ["userId", "name", "email", "password"];
+      const fields = ["userId", "name", "password"];
 
-      // 각 필드의 한글 이름 매핑 (알림 메시지용)
       const fieldNames = {
         userId: "아이디",
         name: "닉네임",
-        email: "이메일",
         password: "비밀번호"
       };
 

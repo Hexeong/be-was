@@ -36,7 +36,7 @@ public class UserHttpHandler implements DynamicHttpHandler {
     public ModelAndView createUser(HttpResponse res, @Formdata User user) {
 
         if (user.getUserId().length() < 4 || user.getName().length() < 4 ||
-                user.getPassword().length() < 4 || user.getEmail().length() < 4)
+                user.getPassword().length() < 4)
             throw new CustomException(ErrorCode.REGISTRATION_FIELD_ERROR);
 
         if (UserDao.findById(user.getUserId()).isPresent()) {

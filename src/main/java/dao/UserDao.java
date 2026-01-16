@@ -2,7 +2,6 @@ package dao;
 
 import db.TransactionManager;
 import model.User;
-import model.request.UserUpdateRequest;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -13,7 +12,7 @@ import java.util.Optional;
 public class UserDao {
 
     public static void create(User user) {
-        String sql = "INSERT INTO USERS (userId, password, name, email, profileImageUrl) VALUES (?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO USERS (userId, password, name, profileImageUrl) VALUES (?, ?, ?, ?)";
 
         Connection conn = null;
         PreparedStatement pstmt = null;
@@ -25,8 +24,7 @@ public class UserDao {
             pstmt.setString(1, user.getUserId());
             pstmt.setString(2, user.getPassword());
             pstmt.setString(3, user.getName());
-            pstmt.setString(4, user.getEmail());
-            pstmt.setString(5, user.getProfileImageUrl());
+            pstmt.setString(4, user.getProfileImageUrl());
 
             pstmt.executeUpdate();
 
@@ -39,7 +37,7 @@ public class UserDao {
     }
 
     public static Optional<User> findByName(String name) {
-        String sql = "SELECT userId, password, name, email, profileImageUrl FROM USERS WHERE name = ?";
+        String sql = "SELECT userId, password, name, profileImageUrl FROM USERS WHERE name = ?";
 
         Connection conn = null;
         PreparedStatement pstmt = null;
@@ -56,8 +54,7 @@ public class UserDao {
                         rs.getString("userId"),
                         rs.getString("profileImageUrl"),
                         rs.getString("password"),
-                        rs.getString("name"),
-                        rs.getString("email")
+                        rs.getString("name")
                 ));
             }
             return Optional.empty();
@@ -72,8 +69,7 @@ public class UserDao {
     }
 
     public static Optional<User> findById(String userId) {
-        // [수정] profileImageUrl 조회 추가
-        String sql = "SELECT userId, password, name, email, profileImageUrl FROM USERS WHERE userId = ?";
+        String sql = "SELECT userId, password, name, profileImageUrl FROM USERS WHERE userId = ?";
 
         Connection conn = null;
         PreparedStatement pstmt = null;
@@ -90,8 +86,7 @@ public class UserDao {
                         rs.getString("userId"),
                         rs.getString("profileImageUrl"),
                         rs.getString("password"),
-                        rs.getString("name"),
-                        rs.getString("email")
+                        rs.getString("name")
                 ));
             }
             return Optional.empty();
@@ -106,7 +101,7 @@ public class UserDao {
     }
 
     public static void editInfo(User user) {
-        String sql = "UPDATE USERS SET password = ?, name = ?, email = ?, profileImageUrl = ? WHERE userId = ?";
+        String sql = "UPDATE USERS SET password = ?, name = ?, profileImageUrl = ? WHERE userId = ?";
 
         Connection conn = null;
         PreparedStatement pstmt = null;
@@ -117,9 +112,8 @@ public class UserDao {
 
             pstmt.setString(1, user.getPassword());
             pstmt.setString(2, user.getName());
-            pstmt.setString(3, user.getEmail());
-            pstmt.setString(4, user.getProfileImageUrl());
-            pstmt.setString(5, user.getUserId());
+            pstmt.setString(3, user.getProfileImageUrl());
+            pstmt.setString(4, user.getUserId());
 
             pstmt.executeUpdate();
 

@@ -1,44 +1,46 @@
 -- 1. 테이블 생성
+DROP TABLE IF EXISTS COMMENT;
+DROP TABLE IF EXISTS ARTICLE;
+DROP TABLE IF EXISTS USERS;
 
 CREATE TABLE IF NOT EXISTS USERS (
-    userId VARCHAR(50) PRIMARY KEY,
+                                     userId VARCHAR(50) PRIMARY KEY,
     password VARCHAR(50) NOT NULL,
     name VARCHAR(50) NOT NULL,
-    email VARCHAR(50) NOT NULL,
     profileImageUrl VARCHAR(255)
-);
+    );
 
 CREATE TABLE IF NOT EXISTS ARTICLE (
-    articleId VARCHAR(254) PRIMARY KEY,
+                                       articleId VARCHAR(254) PRIMARY KEY,
     content VARCHAR(1023) NOT NULL,
     imageUrl VARCHAR(255),
     likeCnt INTEGER NOT NULL,
     writerId VARCHAR(50) NOT NULL,
     writerName VARCHAR(50) NOT NULL,
     createdAt VARCHAR(50) NOT NULL
-);
+    );
 
 CREATE TABLE IF NOT EXISTS COMMENT (
-    commentId VARCHAR(254) PRIMARY KEY,
+                                       commentId VARCHAR(254) PRIMARY KEY,
     content VARCHAR(1023) NOT NULL,
     writerId VARCHAR(50) NOT NULL,
     writerName VARCHAR(50) NOT NULL,
     articleId VARCHAR(254) NOT NULL,
     createdAt VARCHAR(50) NOT NULL
-);
+    );
 
 
 -- 2. 테스트 데이터 초기화
 
--- USERS
-INSERT INTO USERS (userId, password, name, email, profileImageUrl) VALUES
-                                                                       ('user1', '1234', 'Alice', 'alice@example.com', '/profile/user1.png'),
-                                                                       ('user2', '1234', 'Bob', 'bob@example.com', '/profile/user2.png'),
-                                                                       ('user3', '1234', 'Charlie', 'charlie@example.com', '/profile/user3.png'),
-                                                                       ('user4', '1234', 'David', 'david@example.com', '/profile/user4.png'),
-                                                                       ('user5', '1234', 'Eve', 'eve@example.com', '/profile/user5.png');
+-- USERS (email 값 제거)
+INSERT INTO USERS (userId, password, name, profileImageUrl) VALUES
+                                                                ('user1', '1234', 'Alice', '/profile/user1.png'),
+                                                                ('user2', '1234', 'Bob', '/profile/user2.png'),
+                                                                ('user3', '1234', 'Charlie', '/profile/user3.png'),
+                                                                ('user4', '1234', 'David', '/profile/user4.png'),
+                                                                ('user5', '1234', 'Eve', '/profile/user5.png');
 
--- ARTICLE
+-- ARTICLE (변경 없음)
 INSERT INTO ARTICLE (articleId, content, imageUrl, likeCnt, writerId, writerName, createdAt) VALUES
                                                                                                  ('article1', '안녕하세요, 첫 번째 게시글입니다.', '/uploads/article1.png', 0, 'user1', 'Alice', '2024-03-01 10:00:00'),
                                                                                                  ('article2', '두 번째 게시글 내용입니다.', '/uploads/article2.png', 3, 'user2', 'Bob', '2024-03-01 11:00:00'),
@@ -46,7 +48,7 @@ INSERT INTO ARTICLE (articleId, content, imageUrl, likeCnt, writerId, writerName
                                                                                                  ('article4', '네 번째 게시글입니다.', '/uploads/article4.png', 12, 'user4', 'David', '2024-03-01 13:00:00'),
                                                                                                  ('article5', '마지막 다섯 번째 게시글입니다.', '/uploads/article5.png', 25, 'user5', 'Eve', '2024-03-01 14:00:00');
 
--- COMMENT
+-- COMMENT (변경 없음)
 INSERT INTO COMMENT (commentId, content, writerId, writerName, articleId, createdAt) VALUES
                                                                                          ('comment1', 'Alice님 환영합니다!', 'user2', 'Bob', 'article1', '2024-03-01 10:05:00'),
                                                                                          ('comment2', '좋은 글이네요.', 'user3', 'Charlie', 'article2', '2024-03-01 11:05:00'),

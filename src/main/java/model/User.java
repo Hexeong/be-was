@@ -7,16 +7,16 @@ public class User {
     private String profileImageUrl = "";
     private String password;
     private String name;
-    private String email;
+    // email 필드 삭제
 
     public User() {}
 
-    public User(String userId, String profileImageUrl, String password, String name, String email) {
+    // 생성자에서 email 파라미터 제거
+    public User(String userId, String profileImageUrl, String password, String name) {
         this.userId = userId;
         this.profileImageUrl = profileImageUrl;
         this.password = password;
         this.name = name;
-        this.email = email;
     }
 
     public String getUserId() {
@@ -35,9 +35,7 @@ public class User {
         return name;
     }
 
-    public String getEmail() {
-        return email;
-    }
+    // getEmail() 메서드 삭제
 
     public void setProfileImageUrl(String profileImageUrl) {
         this.profileImageUrl = profileImageUrl;
@@ -58,7 +56,6 @@ public class User {
                 ", profileImageUrl='" + profileImageUrl + '\'' +
                 ", password='" + password + '\'' +
                 ", name='" + name + '\'' +
-                ", email='" + email + '\'' +
                 '}';
     }
 
