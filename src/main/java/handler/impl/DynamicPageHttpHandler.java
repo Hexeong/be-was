@@ -64,18 +64,18 @@ public class DynamicPageHttpHandler implements DynamicHttpHandler {
         List<Comment> comments = CommentDao.findAllByArticleId(article.getArticleId());
         model.put("comments", comments);
 
-        if (pageNum > 0) { // 이전 글, 현재 페이지가 0보다 커야 존재함
-            model.put("hasPrev", true);
-            model.put("prevId", pageNum - 1);
-        } else {
-            model.put("noPrev", true);
-        }
-
-        if (pageNum < totalCount - 1) { // 다음 글, 현재 페이지가 (전체 개수 - 1)보다 작아야 존재함
+        if (pageNum > 0) { // 다음 글, 현재 페이지가 (전체 개수 - 1)보다 작아야 존재함
             model.put("hasNext", true);
-            model.put("nextId", pageNum + 1);
+            model.put("nextId", pageNum - 1);
         } else {
             model.put("noNext", true);
+        }
+
+        if (pageNum < totalCount - 1) { // 이전 글, 현재 페이지가 0보다 커야 존재함
+            model.put("hasPrev", true);
+            model.put("prevId", pageNum + 1);
+        } else {
+            model.put("noPrev", true);
         }
 
         if (isLoginStatus(req, model)) {
