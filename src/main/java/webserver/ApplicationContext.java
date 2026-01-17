@@ -48,12 +48,16 @@ public class ApplicationContext {
     private static final String ARGUMENT_RESOLVER_PACKAGE_PATH = "resolver.argument";
 
     public ApplicationContext() throws SQLException {
+        this(HANDLER_PACKAGE_PATH);
+    }
+
+    ApplicationContext(String handlerPackagePath) throws SQLException {
         this.dispatcher = new Dispatcher(this);
         this.mapping = new HandlerMapping(); // HandlerMapping 인스턴스 초기화
 
         // 1. 컴포넌트 스캔 (핸들러, 어댑터, 인터셉터)
         // 핸들러: @Controller 어노테이션이 붙은 클래스 스캔
-        this.handlerList = scanPackage(HANDLER_PACKAGE_PATH,
+        this.handlerList = scanPackage(handlerPackagePath,
                 clazz -> clazz.isAnnotationPresent(Router.class));
 
         // 어댑터: HandlerAdapter 인터페이스를 구현한 클래스 스캔
@@ -109,7 +113,7 @@ public class ApplicationContext {
 
             while (resources.hasMoreElements()) {
                 URL resource = resources.nextElement();
-                dirs.add(new File(resource.getFile()));
+                dirs.add(new File(resource.toURI()));
             }
 
             for (File directory : dirs) {

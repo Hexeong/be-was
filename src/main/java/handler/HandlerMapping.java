@@ -16,7 +16,12 @@ public class HandlerMapping {
 
     public void addMapping(RouteKey key, HandlerMethod handler) {
         Map<RequestMethod, HandlerMethod> methodMap = mapping.computeIfAbsent(key.urlPath(), k -> new HashMap<>());
-        methodMap.put(key.method(), handler);
+        HandlerMethod existing = methodMap.putIfAbsent(key.method(), handler);
+        if (existing != null) {
+            throw new IllegalStateException("Duplicate request mapping: " + key.method() + " " + key.urlPath()
+                    + " (" + existing.getHandlerMethod().toGenericString()
+                    + " and " + handler.getHandlerMethod().toGenericString() + ")");
+        }
     }
 
     public HandlerMethod getHandler(RouteKey key) {
