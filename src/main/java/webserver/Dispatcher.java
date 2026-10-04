@@ -28,18 +28,26 @@ public class Dispatcher {
 
         HandlerAdapter ha = context.getHandlerAdapter(mappedHandler.getHandler());
 
-        if (!mappedHandler.applyPreHandle(req, res)) {
-            return;
+        Exception dispatchException = null;
+        try {
+            if (!mappedHandler.applyPreHandle(req, res)) {
+                return;
+            }
+
+            ModelAndView mv = ha.handle(req, res, mappedHandler.getHandler());
+
+            // TODO:: forward에 대한 처리를 할경우, 다시 route부터 실행해야 한다.
+
+            if (!mappedHandler.applyPostHandle(req, res)) {
+                return;
+            }
+
+            mv.resolve(res);
+        } catch (Exception e) {
+            dispatchException = e;
+            throw e; // 리다이렉트 및 에러 응답은 기존처럼 RawRequestHandler에서 처리한다.
+        } finally {
+            mappedHandler.triggerAfterCompletion(req, res, dispatchException);
         }
-
-        ModelAndView mv = ha.handle(req, res, mappedHandler.getHandler());
-
-        // TODO:: forward에 대한 처리를 할경우, 다시 route부터 실행해야 한다.
-
-        if (!mappedHandler.applyPostHandle(req, res)) {
-            return;
-        }
-
-        mv.resolve(res);
     }
 }

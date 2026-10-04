@@ -11,7 +11,8 @@ public interface Interceptor {
     default boolean postHandle(HttpRequest req, HttpResponse res, Object handler) throws CustomException {
         return true;
     };
-    default void afterCompletion(HttpRequest req, HttpResponse res, Object handler) {
+    default void afterCompletion(HttpRequest req, HttpResponse res, Object handler, Exception ex) {
+        // ex : 처리 중 발생한 예외 (정상 완료 시 null)
         // 보통 들어가는 로직은 다음과 같다.
         // 1. ThreadLocal 정리
         // 2. 리소스 반환
